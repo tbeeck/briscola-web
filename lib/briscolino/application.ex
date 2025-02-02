@@ -11,6 +11,7 @@ defmodule Briscolino.Application do
       BriscolinoWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:briscolino, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Briscolino.PubSub},
+      Briscolino.GameSupervisor,
       # Start the Finch HTTP client for sending emails
       {Finch, name: Briscolino.Finch},
       # Start a worker by calling: Briscolino.Worker.start_link(arg)
