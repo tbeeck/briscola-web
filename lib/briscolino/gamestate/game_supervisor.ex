@@ -5,10 +5,14 @@ defmodule Briscolino.GameSupervisor do
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
-  def new_game() do
+  def new_game(opts \\ []) do
+    game =
+      Briscola.Game.new(opts)
+      |> IO.inspect()
+
     case DynamicSupervisor.start_child(__MODULE__, %{
            id: :ignored,
-           start: {Briscolino.GameServer, :start_link, [[]]}
+           start: {Briscolino.GameServer, :start_link, [game]}
          }) do
       {:error, error} -> {:error, error}
       {:ok, pid} -> {:ok, pid}

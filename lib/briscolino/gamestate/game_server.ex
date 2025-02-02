@@ -1,8 +1,8 @@
 defmodule Briscolino.GameServer do
   use GenServer
 
-  def start_link(_args) do
-    GenServer.start_link(__MODULE__, [], [])
+  def start_link(game) do
+    GenServer.start_link(__MODULE__, game, [])
   end
 
   def play(pid, card) do
@@ -17,10 +17,15 @@ defmodule Briscolino.GameServer do
     GenServer.call(pid, :redeal)
   end
 
-  def end_game(pid) do
+  def end_game(pid, force \\ false) do
     case GenServer.call(pid, :result) do
-      {:reply, nil} ->
-        nil
+      nil ->
+        if force do
+          GenServer.stop(pid)
+          []
+        else
+          nil
+        end
 
       {:reply, result} ->
         GenServer.stop(pid)
@@ -29,9 +34,8 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
-  def init(_) do
-    initial_state = Briscola.Game.new(players: 4)
-    {:ok, initial_state}
+  def init(game) do
+    {:ok, game}
   end
 
   @impl true
