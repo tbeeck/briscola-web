@@ -6,9 +6,7 @@ defmodule Briscolino.GameSupervisor do
   end
 
   def new_game(opts \\ []) do
-    game =
-      Briscola.Game.new(opts)
-      |> IO.inspect()
+    game = Briscola.Game.new(opts)
 
     case DynamicSupervisor.start_child(__MODULE__, %{
            id: :ignored,
