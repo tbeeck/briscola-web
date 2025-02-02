@@ -13,6 +13,10 @@ defmodule Briscolino.GameServer do
     GenServer.call(pid, :next_hand)
   end
 
+  def redeal(pid) do
+    GenServer.call(pid, :redeal)
+  end
+
   def end_game(pid) do
     case GenServer.call(pid, :result) do
       {:reply, nil} ->
@@ -48,6 +52,14 @@ defmodule Briscolino.GameServer do
     case Briscola.Game.score_trick(state) do
       {:error, err} -> {:reply, {:error, err}, state}
       {:ok, game, winner} -> {:reply, {:ok, game, winner}, game}
+    end
+  end
+
+  @impl true
+  def handle_call(:redeal, _from, state) do
+    case Briscola.Game.redeal(state) do
+      {:error, err} -> {:reply, {:error, err}, state}
+      game -> {:reply, :ok, game}
     end
   end
 
