@@ -15,7 +15,7 @@
   <% end %>
 </div>
 
-<.simple_form for={%{}} method="delete" action={~p"/devgame/end/#{Briscolino.GameSupervisor.game_id(@game_pid)}"}>
+<.simple_form for={%{}} method="delete" action={~p"/debug/devgame/end/#{Briscolino.GameSupervisor.game_id(@game_pid)}"}>
   <:actions>
       <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
   </:actions>

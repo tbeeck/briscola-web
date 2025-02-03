@@ -5,7 +5,7 @@ defmodule Briscolino.GameSupervisor do
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
-  def new_game(opts \\ []) do
+  def new_game(players, opts \\ []) do
     game = Briscola.Game.new(opts)
 
     case DynamicSupervisor.start_child(__MODULE__, %{

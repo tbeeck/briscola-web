@@ -18,11 +18,16 @@ defmodule BriscolinoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
 
-    get "/devgame", PageController, :devgame
-    get "/devgame/view/:id", PageController, :view_game
-    post "/devgame/new", PageController, :create_game
-    delete "/devgame/end/:id", PageController, :end_game
+  if Application.compile_env(:briscolino, :dev_routes) do
+    scope "/debug", BriscolinoWeb do
+      pipe_through :browser
+      get "/devgame", DebugController, :devgame
+      get "/devgame/view/:id", DebugController, :view_game
+      post "/devgame/new", DebugController, :create_game
+      delete "/devgame/end/:id", DebugController, :end_game
+    end
   end
 
   # Other scopes may use custom stacks.

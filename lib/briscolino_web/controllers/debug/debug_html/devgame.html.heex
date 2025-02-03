@@ -1,7 +1,7 @@
 <h1>Devgame</h1>
 
 <div class="mt-8 flex">
-  <.simple_form for={@new_game} name="Make new game" action={~p"/devgame/new"} method="post">
+  <.simple_form for={@new_game} name="Make new game" action={"/debug/devgame/new"} method="post">
     <.input field={@new_game[:players]} name="players" type="number" label="Players" value="2" />
     <:actions>
       <.button class="bg-brand hover:bg-brand/80" type="submit">Create Game</.button>
@@ -15,7 +15,7 @@
       <h2 class="text-xl font-semibold leading-7 text-zinc-900">Game Info</h2>
       <h3>{inspect(game.pid)}</h3>
       <.game_details game={game.state} />
-      <.link href={~p"/devgame/view/#{Briscolino.GameSupervisor.game_id(game.pid)}"}>View</.link>
+      <.link href={"/debug/devgame/view/#{Briscolino.GameSupervisor.game_id(game.pid)}"}>View</.link>
     </div>
   <% end %>
 </div>

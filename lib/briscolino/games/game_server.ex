@@ -3,17 +3,20 @@ defmodule Briscolino.GameServer do
 
   defmodule PlayerInfo do
     @type t() :: %__MODULE__{
-            session_token: String.t()
+            session_token: String.t(),
+            is_ai: boolean(),
+            name: String.t()
           }
-    defstruct [:session_token]
+    defstruct [:session_token, :is_ai, :name]
   end
 
   defmodule ServerState do
     @type t() :: %__MODULE__{
             gamestate: Briscola.Game,
-            playerinfo: [PlayerInfo.t()]
+            playerinfo: [PlayerInfo.t()],
+            id: binary()
           }
-    defstruct [:gamestate, :playerinfo]
+    defstruct [:gamestate, :playerinfo, :id]
   end
 
   def start_link(game) do
