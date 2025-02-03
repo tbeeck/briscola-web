@@ -1,6 +1,21 @@
 defmodule Briscolino.GameServer do
   use GenServer
 
+  defmodule PlayerInfo do
+    @type t() :: %__MODULE__{
+            session_token: String.t()
+          }
+    defstruct [:session_token]
+  end
+
+  defmodule ServerState do
+    @type t() :: %__MODULE__{
+            gamestate: Briscola.Game,
+            playerinfo: [PlayerInfo.t()]
+          }
+    defstruct [:gamestate, :playerinfo]
+  end
+
   def start_link(game) do
     GenServer.start_link(__MODULE__, game, [])
   end
