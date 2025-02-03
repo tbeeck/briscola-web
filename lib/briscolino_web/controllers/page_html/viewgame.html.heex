@@ -1,0 +1,16 @@
+<h1>Players</h1>
+<div class="mt-4 flex">
+  <%= for {player, idx} <- Enum.with_index(@game.players) do %>
+    <div class="m-1 p-1 shadow">
+      <h2>Player {idx + 1}</h2>
+      <div>
+        <h3>Hand:</h3>
+        <div class="flex-wrap">
+          <%= for card <- player.hand do %>
+            <.dbg_card card={card} />
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -26,6 +26,16 @@ defmodule Briscolino.GameSupervisor do
     end)
   end
 
+  def game_id(pid) do
+    # Turn PID into a string for easy comparison
+    :erlang.term_to_binary(pid)
+  end
+
+  def game_pid(id) do
+    # Turn string back into PID
+    :erlang.binary_to_term(id)
+  end
+
   def init(_) do
     DynamicSupervisor.init(strategy: :one_for_one)
   end

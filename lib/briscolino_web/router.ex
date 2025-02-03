@@ -20,6 +20,7 @@ defmodule BriscolinoWeb.Router do
     get "/", PageController, :home
 
     get "/devgame", PageController, :devgame
+    get "/devgame/view/:id", PageController, :view_game
     post "/devgame/new", PageController, :create_game
   end
 

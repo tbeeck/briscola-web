@@ -11,7 +11,11 @@ defmodule BriscolinoWeb.PageController do
     games =
       Briscolino.GameSupervisor.active_games()
       |> Enum.map(fn pid ->
-        Briscolino.GameServer.state(pid)
+        %{
+          pid: pid,
+          name: :undefined,
+          state: Briscolino.GameServer.state(pid)
+        }
       end)
 
     new_game_form = %{"players" => 2}
@@ -26,5 +30,12 @@ defmodule BriscolinoWeb.PageController do
     conn
     |> put_flash(:info, "Game created successfully")
     |> redirect(to: "/devgame")
+  end
+
+  def view_game(conn, params) do
+    # View a specific game by its ID.
+    pid = Briscolino.GameSupervisor.game_pid(params["id"])
+    game = Briscolino.GameServer.state(pid)
+    render(conn, :viewgame, game: game)
   end
 end

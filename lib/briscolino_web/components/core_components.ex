@@ -575,12 +575,24 @@ defmodule BriscolinoWeb.CoreComponents do
   """
   attr :game, :any, required: true
 
-  def game_info(assigns) do
+  def game_details(assigns) do
     ~H"""
     <div class="">
-      <h2 class="text-xl font-semibold leading-7 text-zinc-900">Game Info</h2>
       <p class="mt-4 text-sm text-zinc-500">Players: {length(@game.players)}</p>
       <p class="mt-4 text-sm text-zinc-500">Deck size: {length(@game.deck.cards)}</p>
+    </div>
+    """
+  end
+
+  @doc """
+  debug card display
+  """
+  attr :card, :any, required: true
+
+  def dbg_card(assigns) do
+    ~H"""
+    <div class="p-2">
+      <p class="mt-4 text-sm text-zinc-500">{@card.rank} of {@card.suit}</p>
     </div>
     """
   end
