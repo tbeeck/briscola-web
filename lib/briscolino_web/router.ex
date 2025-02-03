@@ -22,6 +22,7 @@ defmodule BriscolinoWeb.Router do
     get "/devgame", PageController, :devgame
     get "/devgame/view/:id", PageController, :view_game
     post "/devgame/new", PageController, :create_game
+    delete "/devgame/end/:id", PageController, :end_game
   end
 
   # Other scopes may use custom stacks.
