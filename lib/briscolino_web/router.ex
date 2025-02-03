@@ -18,6 +18,9 @@ defmodule BriscolinoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    get "/devgame", PageController, :devgame
+    post "/devgame/new", PageController, :create_game
   end
 
   # Other scopes may use custom stacks.

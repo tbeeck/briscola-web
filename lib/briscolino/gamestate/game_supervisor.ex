@@ -17,7 +17,15 @@ defmodule Briscolino.GameSupervisor do
     end
   end
 
-  @impl true
+  def active_games() do
+    # Map to just the PIDs of workers
+    Enum.map(DynamicSupervisor.which_children(__MODULE__), fn tuple ->
+      case tuple do
+        {:undefined, pid, _, _} -> pid
+      end
+    end)
+  end
+
   def init(_) do
     DynamicSupervisor.init(strategy: :one_for_one)
   end

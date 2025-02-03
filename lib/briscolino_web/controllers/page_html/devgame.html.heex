@@ -1,0 +1,16 @@
+<h1>Devgame</h1>
+
+<.simple_form for={@new_game} name="Make new game" action={~p"/devgame/new"} method="post">
+  <.input field={@new_game[:players]} name="players" type="number" label="Players" value="2" />
+  <:actions>
+    <.button class="bg-brand hover:bg-brand/80" type="submit">Create Game</.button>
+  </:actions>
+</.simple_form>
+
+<div class="mt-8">
+  <%= for game <- @games do %>
+    <div class="p-4 bg-white rounded shadow mb-4">
+      <.game_info game={game} />
+    </div>
+  <% end %>
+</div>

@@ -17,6 +17,10 @@ defmodule Briscolino.GameServer do
     GenServer.call(pid, :redeal)
   end
 
+  def state(pid) do
+    GenServer.call(pid, :state)
+  end
+
   def end_game(pid, force \\ false) do
     case GenServer.call(pid, :result) do
       nil ->
@@ -40,7 +44,7 @@ defmodule Briscolino.GameServer do
 
   @impl true
   def handle_call(:state, _from, state) do
-    {:reply, state}
+    {:reply, state, state}
   end
 
   @impl true

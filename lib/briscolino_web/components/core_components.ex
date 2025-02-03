@@ -571,6 +571,21 @@ defmodule BriscolinoWeb.CoreComponents do
   end
 
   @doc """
+  Renders debug info about a game.
+  """
+  attr :game, :any, required: true
+
+  def game_info(assigns) do
+    ~H"""
+    <div class="">
+      <h2 class="text-xl font-semibold leading-7 text-zinc-900">Game Info</h2>
+      <p class="mt-4 text-sm text-zinc-500">Players: {length(@game.players)}</p>
+      <p class="mt-4 text-sm text-zinc-500">Deck size: {length(@game.deck.cards)}</p>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a [Heroicon](https://heroicons.com).
 
   Heroicons come in three styles – outline, solid, and mini.
