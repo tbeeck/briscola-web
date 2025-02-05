@@ -1,5 +1,7 @@
 <h1>Board</h1>
 <div class="mt-4">
+  <h2>Briscola</h2>
+  <p>{inspect(@game.gamestate.briscola)}</p>
   <h2>Trick</h2>
   <%= for card <- @game.gamestate.trick do %>
     <p>{card.rank} of {card.suit}</p>
@@ -12,7 +14,7 @@
     <div class="m-1 p-1 shadow">
       <h2>{idx + 1}: {player.name}</h2>
       <%= if @game.gamestate.action_on == idx do %>
-      <p>Action</p>
+        <p>Action</p>
       <% end %>
       <h3>Hand:</h3>
       <div>
@@ -20,6 +22,8 @@
           <p>{card.rank} of {card.suit}</p>
         <% end %>
       </div>
+
+      <h3>Score: {Briscola.Player.score(Enum.at(@game.gamestate.players, idx))}</h3>
     </div>
   <% end %>
 </div>
