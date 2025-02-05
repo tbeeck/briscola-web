@@ -1,5 +1,13 @@
-<h1>Players</h1>
+<h1>Board</h1>
+<div class="mt-4">
+  <h2>Trick</h2>
+  <%= for card <- @game.gamestate.trick do %>
+    <p>{card.rank} of {card.suit}</p>
+  <% end %>
+</div>
+
 <div class="mt-4 flex">
+<h1>Players</h1>
   <%= for {player, idx} <- Enum.with_index(@game.playerinfo) do %>
     <div class="m-1 p-1 shadow">
       <h2>{idx + 1}: {player.name}</h2>
@@ -18,3 +26,11 @@
     <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
   </:actions>
 </.simple_form>
+
+<%= for idx <- 0..2 do %>
+  <.simple_form for={%{}} method="post" action={"/debug/viewgame/#{@game.id}/play/#{idx}"}>
+    <:actions>
+      <.button class="bg-brand hover:bg-brand/80" type="submit">Play Card {idx}</.button>
+    </:actions>
+  </.simple_form>
+<% end %>

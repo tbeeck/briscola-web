@@ -12,7 +12,7 @@ defmodule Briscolino.GameServer do
 
   defmodule ServerState do
     @type t() :: %__MODULE__{
-            gamestate: Briscola.Game,
+            gamestate: Briscola.Game.t(),
             playerinfo: [PlayerInfo.t()],
             id: binary()
           }
@@ -28,7 +28,7 @@ defmodule Briscolino.GameServer do
   end
 
   def score(pid) do
-    GenServer.call(pid, :next_hand)
+    GenServer.call(pid, :score)
   end
 
   def redeal(pid) do
@@ -68,16 +68,27 @@ defmodule Briscolino.GameServer do
   @impl true
   def handle_call({:play, index}, _from, state) do
     case Briscola.Game.play(state.gamestate, index) do
-      {:ok, game} -> {:reply, game, %ServerState{state | gamestate: game}}
-      {:error, err} -> {:reply, {:error, err}, state}
+      {:ok, game} ->
+        if Briscola.Game.should_score_trick?(game) do
+          Process.send_after(self(), :score, 1000)
+        end
+
+        {:reply, {:ok, game}, %ServerState{state | gamestate: game}}
+
+      {:error, err} ->
+        {:reply, {:error, err}, state}
     end
   end
 
   @impl true
-  def handle_call(:next_hand, _from, state) do
+  def handle_call(:score, _from, state) do
     case Briscola.Game.score_trick(state) do
-      {:error, err} -> {:reply, {:error, err}, state}
-      {:ok, game, winner} -> {:reply, {:ok, game, winner}, %ServerState{state | gamestate: game}}
+      {:error, err} ->
+        {:reply, {:error, err}, state}
+
+      {:ok, game, winner} ->
+        Process.send_after(self(), :redeal, 2000)
+        {:reply, {:ok, game, winner}, %ServerState{state | gamestate: game}}
     end
   end
 

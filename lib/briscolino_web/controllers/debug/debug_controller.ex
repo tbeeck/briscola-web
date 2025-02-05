@@ -51,4 +51,23 @@ defmodule BriscolinoWeb.DebugController do
 
     render(conn, :viewgame, game: state)
   end
+
+  def play_card(conn, params) do
+    card_id = params["card"] |> String.to_integer()
+    game_id = params["id"]
+
+    pid = GameSupervisor.get_game_pid(game_id)
+
+    case Briscolino.GameServer.play(pid, card_id) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:info, "Card played successfully")
+        |> redirect(to: "/debug/viewgame/#{game_id}")
+
+      {:error, err} ->
+        conn
+        |> put_flash(:error, "Error playing card: #{err}")
+        |> redirect(to: "/debug/viewgame/#{game_id}")
+    end
+  end
 end
