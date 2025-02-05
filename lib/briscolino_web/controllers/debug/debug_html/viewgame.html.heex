@@ -7,10 +7,13 @@
 </div>
 
 <div class="mt-4 flex">
-<h1>Players</h1>
+  <h1>Players</h1>
   <%= for {player, idx} <- Enum.with_index(@game.playerinfo) do %>
     <div class="m-1 p-1 shadow">
       <h2>{idx + 1}: {player.name}</h2>
+      <%= if @game.gamestate.action_on == idx do %>
+      <p>Action</p>
+      <% end %>
       <h3>Hand:</h3>
       <div>
         <%= for card <- Enum.at(@game.gamestate.players, idx).hand do %>
