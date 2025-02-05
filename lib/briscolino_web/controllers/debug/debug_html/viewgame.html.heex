@@ -2,20 +2,18 @@
 <div class="mt-4 flex">
   <%= for {player, idx} <- Enum.with_index(@game.playerinfo) do %>
     <div class="m-1 p-1 shadow">
-      <h2>Player {idx + 1}</h2>
+      <h2>{idx + 1}: {player.name}</h2>
+      <h3>Hand:</h3>
       <div>
-        <h3>Hand:</h3>
-        <div class="flex-wrap">
-          <%= for card <- Enum.at(@game.gamestate.players, idx).hand do %>
-            <.dbg_card card={card} />
-          <% end %>
-        </div>
+        <%= for card <- Enum.at(@game.gamestate.players, idx).hand do %>
+          <p>{card.rank} of {card.suit}</p>
+        <% end %>
       </div>
     </div>
   <% end %>
 </div>
 
-<.simple_form for={%{}} method="delete" action={~p"/debug/endgame/#{@game.id}"}>
+<.simple_form for={%{}} method="delete" action={"/debug/endgame/#{@game.id}"}>
   <:actions>
     <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
   </:actions>
