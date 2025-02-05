@@ -23,10 +23,12 @@ defmodule BriscolinoWeb.Router do
   if Application.compile_env(:briscolino, :dev_routes) do
     scope "/debug", BriscolinoWeb do
       pipe_through :browser
-      get "/devgame", DebugController, :devgame
-      get "/devgame/view/:id", DebugController, :view_game
-      post "/devgame/new", DebugController, :create_game
-      delete "/devgame/end/:id", DebugController, :end_game
+
+      get "/", DebugController, :devgame
+
+      get "/viewgame/:id", DebugController, :view_game
+      post "/newgame", DebugController, :create_game
+      delete "/endgame/:id", DebugController, :end_game
     end
   end
 

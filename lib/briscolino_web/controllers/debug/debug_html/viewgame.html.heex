@@ -1,12 +1,12 @@
 <h1>Players</h1>
 <div class="mt-4 flex">
-  <%= for {player, idx} <- Enum.with_index(@game.players) do %>
+  <%= for {player, idx} <- Enum.with_index(@game.playerinfo) do %>
     <div class="m-1 p-1 shadow">
       <h2>Player {idx + 1}</h2>
       <div>
         <h3>Hand:</h3>
         <div class="flex-wrap">
-          <%= for card <- player.hand do %>
+          <%= for card <- Enum.at(@game.gamestate.players, idx).hand do %>
             <.dbg_card card={card} />
           <% end %>
         </div>
@@ -15,8 +15,8 @@
   <% end %>
 </div>
 
-<.simple_form for={%{}} method="delete" action={~p"/debug/devgame/end/#{Briscolino.GameSupervisor.game_id(@game_pid)}"}>
+<.simple_form for={%{}} method="delete" action={~p"/debug/endgame/#{@game.id}"}>
   <:actions>
-      <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
+    <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
   </:actions>
 </.simple_form>

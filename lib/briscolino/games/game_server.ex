@@ -49,7 +49,7 @@ defmodule Briscolino.GameServer do
           nil
         end
 
-      {:reply, result} ->
+      result ->
         GenServer.stop(pid)
         result
     end
@@ -62,13 +62,13 @@ defmodule Briscolino.GameServer do
 
   @impl true
   def handle_call(:state, _from, state) do
-    {:reply, state, state}
+    {:reply, {:ok, state}, state}
   end
 
   @impl true
   def handle_call({:play, index}, _from, state) do
-    case Briscola.Game.play(state, index) do
-      {:ok, game} -> {:reply, game, game}
+    case Briscola.Game.play(state.gamestate, index) do
+      {:ok, game} -> {:reply, game, %ServerState{state | gamestate: game}}
       {:error, err} -> {:reply, {:error, err}, state}
     end
   end
@@ -77,7 +77,7 @@ defmodule Briscolino.GameServer do
   def handle_call(:next_hand, _from, state) do
     case Briscola.Game.score_trick(state) do
       {:error, err} -> {:reply, {:error, err}, state}
-      {:ok, game, winner} -> {:reply, {:ok, game, winner}, game}
+      {:ok, game, winner} -> {:reply, {:ok, game, winner}, %ServerState{state | gamestate: game}}
     end
   end
 
@@ -85,14 +85,14 @@ defmodule Briscolino.GameServer do
   def handle_call(:redeal, _from, state) do
     case Briscola.Game.redeal(state) do
       {:error, err} -> {:reply, {:error, err}, state}
-      game -> {:reply, :ok, game}
+      game -> {:reply, {:ok, game}, %ServerState{state | gamestate: game}}
     end
   end
 
   @impl true
   def handle_call(:result, _from, state) do
-    if Briscola.Game.game_over?(state) do
-      {:reply, Enum.sort_by(state.players, &Briscola.Player.score(&1), :desc), state}
+    if Briscola.Game.game_over?(state.gamestate) do
+      {:reply, Enum.sort_by(state.gamestate.players, &Briscola.Player.score(&1), :desc), state}
     else
       {:reply, nil, state}
     end
