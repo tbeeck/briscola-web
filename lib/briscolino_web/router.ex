@@ -30,6 +30,8 @@ defmodule BriscolinoWeb.Router do
       post "/newgame", DebugController, :create_game
       post "/viewgame/:id/play/:card", DebugController, :play_card
       delete "/endgame/:id", DebugController, :end_game
+
+      live "/livegame/:id", DebugGameLive
     end
   end
 

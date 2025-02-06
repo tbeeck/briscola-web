@@ -19,6 +19,8 @@ defmodule Briscolino.GameServer do
     defstruct [:gamestate, :playerinfo, :id]
   end
 
+  def game_topic(game_id), do: "gamestate:#{game_id}"
+
   def start_link(game) do
     GenServer.start_link(__MODULE__, game, [])
   end
