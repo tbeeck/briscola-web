@@ -1,4 +1,5 @@
 defmodule Briscolino.GameServer do
+  alias Agent.Server
   use GenServer
 
   defmodule PlayerInfo do
@@ -67,7 +68,11 @@ defmodule Briscolino.GameServer do
           Process.send_after(self(), :score, 1000)
         end
 
-        {:reply, {:ok, game}, %ServerState{state | gamestate: game}}
+        new_state =
+          %ServerState{state | gamestate: game}
+          |> notify()
+
+        {:reply, {:ok, game}, new_state}
 
       {:error, err} ->
         {:reply, {:error, err}, state}
@@ -91,15 +96,32 @@ defmodule Briscolino.GameServer do
 
       {:ok, game, _winner} ->
         Process.send_after(self(), :redeal, 2000)
-        {:noreply, %ServerState{state | gamestate: game}}
+
+        new_state =
+          %ServerState{state | gamestate: game}
+          |> notify()
+
+        {:noreply, new_state}
     end
   end
 
   @impl true
   def handle_info(:redeal, state) do
     case Briscola.Game.redeal(state.gamestate) do
-      {:error, _err} -> {:noreply, state}
-      game -> {:noreply, %ServerState{state | gamestate: game}}
+      {:error, _err} ->
+        {:noreply, state}
+
+      game ->
+        new_state =
+          %ServerState{state | gamestate: game}
+          |> notify()
+
+        {:noreply, new_state}
     end
+  end
+
+  defp notify(state) do
+    Phoenix.PubSub.broadcast(Briscolino.PubSub, game_topic(state.id), {:game, state})
+    state
   end
 end
