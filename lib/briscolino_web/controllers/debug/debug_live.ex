@@ -14,17 +14,23 @@ defmodule BriscolinoWeb.DebugGameLive do
 
   def render(assigns) do
     ~H"""
-    <.simple_form for={%{}} method="delete" action={"/debug/endgame/#{@game.id}"}>
-      <:actions>
-        <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
-      </:actions>
-    </.simple_form>
-    <%= for idx <- 0..2 do %>
-      <.button phx-click="play_card" value={idx}>
-        Play Card {idx}
-      </.button>
-    <% end %>
-    <pre>{inspect(@game, pretty: true)}</pre>
+    <div class="flex flex-row">
+      <div>
+        <.simple_form for={%{}} method="delete" action={"/debug/endgame/#{@game.id}"}>
+          <:actions>
+            <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
+          </:actions>
+        </.simple_form>
+        <%= for idx <- 0..2 do %>
+          <.button phx-click="play_card" value={idx}>
+            Play Card {idx}
+          </.button>
+        <% end %>
+      </div>
+      <div>
+        <pre>{inspect(@game, pretty: true)}</pre>
+      </div>
+    </div>
     """
   end
 
