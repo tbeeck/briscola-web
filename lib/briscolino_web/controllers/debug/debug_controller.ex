@@ -29,7 +29,6 @@ defmodule BriscolinoWeb.DebugController do
     pid =
       params["id"]
       |> GameSupervisor.get_game_pid()
-      |> IO.inspect()
 
     if Process.alive?(pid) do
       Briscolino.GameServer.end_game(pid, true)

@@ -73,7 +73,6 @@ defmodule BriscolinoWeb.DebugGameLive do
 
   @impl true
   def handle_info({:game, game}, socket) do
-    IO.inspect(game, label: "recieved game update")
     {:noreply, assign(socket, game: game)}
   end
 end
