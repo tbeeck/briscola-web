@@ -1,5 +1,4 @@
 defmodule Briscolino.GameServer do
-  alias Agent.Server
   use GenServer
 
   defmodule PlayerInfo do

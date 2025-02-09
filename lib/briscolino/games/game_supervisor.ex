@@ -9,7 +9,7 @@ defmodule Briscolino.GameSupervisor do
   end
 
   @spec new_game() :: {:error, any()} | {:ok, pid()}
-  def new_game(opts \\ []) do
+  def new_game(_opts \\ []) do
     players = 4
     game_id = Briscolino.ShortId.new()
     gamestate = Briscola.Game.new(players: players)
