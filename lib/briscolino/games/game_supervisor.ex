@@ -13,7 +13,12 @@ defmodule Briscolino.GameSupervisor do
     players = 4
     game_id = Briscolino.ShortId.new()
     gamestate = Briscola.Game.new(players: players)
-    players = List.duplicate(%PlayerInfo{is_ai: true, name: "AI Player"}, players)
+
+    players =
+      List.duplicate(
+        %PlayerInfo{name: "AI Player", ai_strategy: Briscola.Strategy.Random},
+        players
+      )
 
     initial_state = %GameServer.ServerState{
       playerinfo: players,

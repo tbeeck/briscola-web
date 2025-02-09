@@ -4,11 +4,11 @@ defmodule Briscolino.GameServer do
 
   defmodule PlayerInfo do
     @type t() :: %__MODULE__{
-            session_token: String.t(),
-            is_ai: boolean(),
+            play_token: String.t(),
+            ai_strategy: nil | module(),
             name: String.t()
           }
-    defstruct [:session_token, :is_ai, :name]
+    defstruct [:play_token, :ai_strategy, :name]
   end
 
   defmodule ServerState do
@@ -51,8 +51,9 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
-  def init(game) do
-    {:ok, game}
+  def init(state) do
+    schedule_transition(state)
+    {:ok, state}
   end
 
   @impl true
@@ -64,12 +65,9 @@ defmodule Briscolino.GameServer do
   def handle_call({:play, index}, _from, state) do
     case Briscola.Game.play(state.gamestate, index) do
       {:ok, game} ->
-        if Briscola.Game.should_score_trick?(game) do
-          Process.send_after(self(), :score, 1000)
-        end
-
         new_state =
           %ServerState{state | gamestate: game}
+          |> schedule_transition()
           |> notify()
 
         {:reply, {:ok, game}, new_state}
@@ -89,16 +87,29 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
+  def handle_info(:play_ai, state) do
+    strategy = get_ai_strategy(state)
+    card = strategy.choose_card(state.gamestate, state.gamestate.action_on)
+    {:ok, game} = Briscola.Game.play(state.gamestate, card)
+
+    new_state =
+      %ServerState{state | gamestate: game}
+      |> schedule_transition()
+      |> notify()
+
+    {:noreply, new_state}
+  end
+
+  @impl true
   def handle_info(:score, state) do
     case Briscola.Game.score_trick(state.gamestate) do
       {:error, _err} ->
         {:noreply, state}
 
       {:ok, game, _winner} ->
-        Process.send_after(self(), :redeal, 2000)
-
         new_state =
           %ServerState{state | gamestate: game}
+          |> schedule_transition()
           |> notify()
 
         {:noreply, new_state}
@@ -114,11 +125,32 @@ defmodule Briscolino.GameServer do
       game ->
         new_state =
           %ServerState{state | gamestate: game}
+          |> schedule_transition()
           |> notify()
 
         {:noreply, new_state}
     end
   end
+
+  defp schedule_transition(%ServerState{gamestate: game} = state) do
+    cond do
+      Briscola.Game.should_score_trick?(game) ->
+        Process.send_after(self(), :score, 1000)
+
+      Briscola.Game.needs_redeal?(game) ->
+        Process.send_after(self(), :redeal, 2000)
+
+      action_on_ai(state) && !Briscola.Game.game_over?(game) ->
+        Process.send_after(self(), :play_ai, 500)
+    end
+
+    state
+  end
+
+  defp action_on_ai(%ServerState{} = state), do: get_ai_strategy(state) != nil
+
+  defp get_ai_strategy(%ServerState{gamestate: game} = state),
+    do: Enum.at(state.playerinfo, game.action_on).ai_strategy
 
   defp notify(state) do
     Phoenix.PubSub.broadcast(Briscolino.PubSub, game_topic(state.id), {:game, state})
