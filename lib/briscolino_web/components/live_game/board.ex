@@ -27,7 +27,6 @@ defmodule BriscolinoWeb.LiveGame.Board do
     """
   end
 
-
   @impl true
   def handle_info({:game, game}, socket) do
     {:noreply, assign(socket, game: game)}
