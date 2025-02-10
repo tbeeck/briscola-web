@@ -20,9 +20,11 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container">
+    <div>
       <.player_list game={@game} />
-      Board for {@game.id}
+      <div class="container ml-64">
+        Board for {@game.id}
+      </div>
     </div>
     """
   end

@@ -12,10 +12,13 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list(assigns) do
     ~H"""
-    <div class="container">
+    <div
+      id="sidebar"
+      class="fixed w-64 x-0 y-0 h-full
+            flex flex-col my-auto justify-center">
       <ul>
         <%= for {idx, info, playerstate} <- players(@game) do %>
-          <li> {info.name} {thinking(@game, idx)}</li>
+          <li>{info.name}{thinking(@game, idx)}</li>
         <% end %>
       </ul>
     </div>
@@ -24,7 +27,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def thinking(%ServerState{} = state, player_index) do
     if state.gamestate.action_on == player_index do
-      "(thinking...)"
+      " (thinking...)"
     else
       ""
     end
