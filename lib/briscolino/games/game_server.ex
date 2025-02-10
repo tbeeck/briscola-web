@@ -29,6 +29,20 @@ defmodule Briscolino.GameServer do
     GenServer.call(pid, {:play, card})
   end
 
+  def play(pid, card, play_token) do
+    required_token =
+      state(pid)
+      |> get_play_token()
+
+    case required_token do
+      ^play_token ->
+        play(pid, card)
+
+      _ ->
+        {:error, :not_your_turn}
+    end
+  end
+
   def state(pid) do
     GenServer.call(pid, :state)
   end
@@ -151,8 +165,11 @@ defmodule Briscolino.GameServer do
 
   defp action_on_ai(%ServerState{} = state), do: get_ai_strategy(state) != nil
 
-  defp get_ai_strategy(%ServerState{gamestate: game} = state),
-    do: Enum.at(state.playerinfo, game.action_on).ai_strategy
+  defp get_ai_strategy(%ServerState{gamestate: game, playerinfo: players}),
+    do: Enum.at(players, game.action_on).ai_strategy
+
+  defp get_play_token(%ServerState{gamestate: game, playerinfo: players}),
+    do: Enum.at(players, game.action_on).play_token
 
   defp notify(state) do
     Phoenix.PubSub.broadcast(Briscolino.PubSub, game_topic(state.id), {:game, state})
