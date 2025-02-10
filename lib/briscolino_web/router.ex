@@ -20,6 +20,12 @@ defmodule BriscolinoWeb.Router do
     get "/", PageController, :home
   end
 
+  scope "/game", BriscolinoWeb do
+    pipe_through :browser
+
+    live "/:id", LiveGame.Board
+  end
+
   if Application.compile_env(:briscolino, :dev_routes) do
     scope "/debug", BriscolinoWeb do
       pipe_through :browser
