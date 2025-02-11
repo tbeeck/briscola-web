@@ -25,8 +25,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
-  def thinking(%ServerState{} = state, player_index) do
-    if state.gamestate.action_on == player_index do
+  defp thinking(%ServerState{} = state, player_index) do
+    if state.gamestate.action_on == player_index and
+         !Briscola.Game.needs_redeal?(state.gamestate) and
+         !Briscola.Game.should_score_trick?(state.gamestate) and
+         !Briscola.Game.game_over?(state.gamestate) do
       " (thinking...)"
     else
       ""
