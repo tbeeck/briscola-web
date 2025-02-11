@@ -17,9 +17,15 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       <ul class="bg-gray-100 rounded-xl pl-4">
         <%= for {idx, info, playerstate} <- players(@game) do %>
           <li>
-            <div>{info.name}{thinking(@game, idx)}</div>
-            <div class="h-8">
-              {List.duplicate("🃏", length(playerstate.hand))}
+            <div class="flex flex-row items-center p-2">
+              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-4" />
+              <div class="flex flex-col flex-grow">
+                <div>{info.name}</div>
+                <div class="flex flex-row">
+                  <div class="pl-2 w-4">{player_status(@game, idx)}</div>
+                  <div class="pl-4">[ {player_score(@game, idx)} ]</div>
+                </div>
+              </div>
             </div>
           </li>
         <% end %>
@@ -28,18 +34,21 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
-  defp thinking(%ServerState{} = state, player_index) do
+  defp player_status(%ServerState{} = state, player_index) do
     if state.gamestate.action_on == player_index and
          !Briscola.Game.needs_redeal?(state.gamestate) and
          !Briscola.Game.should_score_trick?(state.gamestate) and
          !Briscola.Game.game_over?(state.gamestate) do
-      " (thinking...)"
+      "..."
     else
       ""
     end
   end
 
-  defp players(%ServerState{gamestate: game, playerinfo: players} = _state) do
+  defp player_score(%ServerState{gamestate: game}, player_index),
+    do: Briscola.Player.score(Enum.at(game.players, player_index))
+
+  defp players(%ServerState{gamestate: game, playerinfo: players}) do
     players
     |> Enum.with_index()
     |> Enum.zip(game.players)
