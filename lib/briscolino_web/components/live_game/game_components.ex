@@ -18,11 +18,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         <%= for {idx, info, playerstate} <- players(@game) do %>
           <li>
             <div class="flex flex-row items-center p-2">
-              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-4" />
+              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2" />
               <div class="flex flex-col flex-grow">
                 <div>{info.name}</div>
-                <div class="flex flex-row">
-                  <div class="pl-2 w-4">{player_status(@game, idx)}</div>
+                <div class="flex flex-row items-center">
+                  <.animated_elipsis />
                   <div class="pl-4">[ {player_score(@game, idx)} ]</div>
                 </div>
               </div>
@@ -30,6 +30,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
           </li>
         <% end %>
       </ul>
+    </div>
+    """
+  end
+
+  def animated_elipsis(assigns) do
+    ~H"""
+    <div class="w-auto flex flex-row items-center">
+      <div class="bg-gray-500 w-2 h-2" />
+      <div class="bg-gray-500 w-2 h-2 ml-2" />
+      <div class="bg-gray-500 w-2 h-2 ml-2" />
     </div>
     """
   end

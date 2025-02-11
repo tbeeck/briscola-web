@@ -154,7 +154,7 @@ defmodule Briscolino.GameServer do
         Process.send_after(self(), :redeal, 2000)
 
       action_on_ai(state) && !Briscola.Game.game_over?(game) ->
-        Process.send_after(self(), :play_ai, 500)
+        Process.send_after(self(), :play_ai, 1000)
 
       Briscola.Game.game_over?(game) ->
         nil
