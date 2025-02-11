@@ -14,13 +14,13 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div
       id="sidebar"
-      class="fixed w-64 x-0 y-0 h-full
+      class="fixed w-64 x-0 y-0 h-full pl-2
             flex flex-col my-auto justify-center">
-      <ul>
+      <ul class="bg-gray-100">
         <%= for {idx, info, playerstate} <- players(@game) do %>
           <li>
             <div>{info.name}{thinking(@game, idx)}</div>
-            <div>
+            <div class="h-8">
               {List.duplicate("🃏", length(playerstate.hand))}
             </div>
           </li>

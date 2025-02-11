@@ -23,8 +23,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
     <div>
       <.player_list game={@game} />
       <div class="ml-64">
-        <p>Board for {@game.id}</p>
-        <pre>{inspect(@game, pretty: true)}</pre>
+        <pre class="text-sm">{inspect(@game, pretty: true)}</pre>
       </div>
     </div>
     """
