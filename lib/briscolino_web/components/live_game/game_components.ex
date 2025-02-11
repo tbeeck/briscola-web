@@ -1,9 +1,36 @@
 defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Phoenix.Component
 
-  alias Briscolino.GameServer.PlayerInfo
   alias Briscolino.GameServer.ServerState
   use Gettext, backend: BriscolinoWeb.Gettext
+
+  @doc """
+  Render the trick pile
+  """
+  attr :game, ServerState, required: true
+
+  def trick(assigns) do
+    ~H"""
+    <div class="">
+      <%= for card <- @game.gamestate.trick do %>
+        <.card card={card} />
+      <% end %>
+    </div>
+    """
+  end
+
+  @doc """
+  Render a card.
+  """
+  attr :card, Briscola.Card, required: true
+
+  def card(assigns) do
+    ~H"""
+    <div class="w-12 h-24 justify-center border">
+      <p>{@card.rank} of {@card.suit}</p>
+    </div>
+    """
+  end
 
   @doc """
   Renders players in the sidebar
