@@ -12,11 +12,9 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list(assigns) do
     ~H"""
-    <div
-      id="sidebar"
-      class="fixed w-64 x-0 y-0 h-full pl-2
+    <div id="sidebar" class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
-      <ul class="bg-gray-100">
+      <ul class="bg-gray-100 rounded-xl pl-4">
         <%= for {idx, info, playerstate} <- players(@game) do %>
           <li>
             <div>{info.name}{thinking(@game, idx)}</div>
