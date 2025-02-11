@@ -15,15 +15,17 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     <div id="sidebar" class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
       <ul class="bg-gray-100 rounded-xl pl-4">
-        <%= for {idx, info, playerstate} <- players(@game) do %>
+        <%= for {idx, info, _playerstate} <- players(@game) do %>
           <li>
             <div class="flex flex-row items-center p-2">
-              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2" />
+              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
               <div class="flex flex-col flex-grow">
                 <div>{info.name}</div>
                 <div class="flex flex-row items-center">
-                  <.animated_elipsis />
-                  <div class="pl-4">[ {player_score(@game, idx)} ]</div>
+                  {player_status(@game, idx)}
+                  <div class="pl-4">
+                    [ {player_score(@game, idx)} ]
+                  </div>
                 </div>
               </div>
             </div>
@@ -49,7 +51,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
          !Briscola.Game.needs_redeal?(state.gamestate) and
          !Briscola.Game.should_score_trick?(state.gamestate) and
          !Briscola.Game.game_over?(state.gamestate) do
-      "..."
+      assigns = %{}
+
+      ~H"""
+      <.animated_elipsis />
+      """
     else
       ""
     end
