@@ -3,11 +3,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   alias Briscolino.GameServer.PlayerInfo
   alias Briscolino.GameServer.ServerState
-  alias Phoenix.LiveView.JS
   use Gettext, backend: BriscolinoWeb.Gettext
 
   @doc """
-  Renders the list of players
+  Renders players in the sidebar
   """
   attr :game, ServerState, required: true
 
@@ -40,7 +39,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     end
   end
 
-  @spec players(ServerState.t()) :: {non_neg_integer(), PlayerInfo.t(), Briscola.Game.Player.t()}
   defp players(%ServerState{gamestate: game, playerinfo: players} = _state) do
     players
     |> Enum.with_index()
