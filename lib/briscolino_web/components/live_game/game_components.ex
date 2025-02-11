@@ -8,13 +8,19 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Render the trick pile
   """
   attr :game, ServerState, required: true
+  attr :rest, :global
 
   def trick(assigns) do
     ~H"""
-    <div class="">
-      <%= for card <- @game.gamestate.trick do %>
-        <.card card={card} />
-      <% end %>
+    <div class="relative h-64 w-128">
+      <div class="absolute inset-0 flex justify-center items-center -z-10">
+        <img src="/images/board.png" class="w-128 h-32" />
+      </div>
+      <div class="flex flex-wrap items-center justify-center h-full space-x-4">
+        <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
+          <.card card={card} />
+        <% end %>
+      </div>
     </div>
     """
   end
@@ -47,10 +53,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             <div class="flex flex-row items-center p-2">
               <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
               <div class="flex flex-col flex-grow">
-                <div>{info.name}</div>
+                <div class="text-lg">{info.name}</div>
                 <div class="flex flex-row items-center">
                   {player_status(@game, idx)}
-                  <div class="pl-4">
+                  <div class="pl-4 text-md">
                     [ {player_score(@game, idx)} ]
                   </div>
                 </div>

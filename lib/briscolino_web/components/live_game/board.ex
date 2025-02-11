@@ -22,9 +22,8 @@ defmodule BriscolinoWeb.LiveGame.Board do
     ~H"""
     <div>
       <.player_list game={@game} />
-      <div class="ml-64">
+      <div class="pl-64 w-screen h-screen">
         <.trick game={@game} />
-        <pre class="text-sm">{inspect(@game, pretty: true)}</pre>
       </div>
     </div>
     """
