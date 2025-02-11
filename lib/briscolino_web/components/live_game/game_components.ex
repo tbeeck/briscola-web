@@ -18,7 +18,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             flex flex-col my-auto justify-center">
       <ul>
         <%= for {idx, info, playerstate} <- players(@game) do %>
-          <li>{info.name}{thinking(@game, idx)}</li>
+          <li>
+            <div>{info.name}{thinking(@game, idx)}</div>
+            <div>
+              {List.duplicate("🃏", length(playerstate.hand))}
+            </div>
+          </li>
         <% end %>
       </ul>
     </div>
@@ -36,7 +41,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     end
   end
 
-  def players(%ServerState{gamestate: game, playerinfo: players} = _state) do
+  defp players(%ServerState{gamestate: game, playerinfo: players} = _state) do
     players
     |> Enum.with_index()
     |> Enum.zip(game.players)
