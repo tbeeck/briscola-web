@@ -119,11 +119,13 @@ defmodule Briscolino.GameServer do
       {:error, _err} ->
         {:noreply, state}
 
-      {:ok, game, _winner} ->
+      {:ok, game, winner} ->
         new_state =
           %ServerState{state | gamestate: game}
           |> schedule_transition()
           |> notify()
+
+        notify_trick(state, winner)
 
         {:noreply, new_state}
     end
@@ -173,6 +175,16 @@ defmodule Briscolino.GameServer do
 
   defp notify(state) do
     Phoenix.PubSub.broadcast(Briscolino.PubSub, game_topic(state.id), {:game, state})
+    state
+  end
+
+  defp notify_trick(state, trick_winner) do
+    Phoenix.PubSub.broadcast(
+      Briscolino.PubSub,
+      game_topic(state.id),
+      {:trick_scored, trick_winner}
+    )
+
     state
   end
 end

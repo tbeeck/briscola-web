@@ -33,4 +33,14 @@ defmodule BriscolinoWeb.LiveGame.Board do
   def handle_info({:game, game}, socket) do
     {:noreply, assign(socket, game: game)}
   end
+
+  @impl true
+  def handle_info({:trick_scored, winner}, socket) do
+    who_won = Enum.at(socket.assigns.game.playerinfo, winner).name
+    socket =
+      socket
+      |> put_flash(:info, "#{who_won} won the trick.")
+
+    {:noreply, socket}
+  end
 end
