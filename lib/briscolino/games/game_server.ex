@@ -32,6 +32,7 @@ defmodule Briscolino.GameServer do
   def play(pid, card, play_token) do
     required_token =
       state(pid)
+      |> elem(1)
       |> get_play_token()
 
     case required_token do
