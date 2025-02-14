@@ -1,9 +1,12 @@
 defmodule BriscolinoWeb.Router do
   use BriscolinoWeb, :router
 
+  import BriscolinoWeb.UserSessions
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug :assign_session_id
     plug :fetch_live_flash
     plug :put_root_layout, html: {BriscolinoWeb.Layouts, :root}
     plug :protect_from_forgery
