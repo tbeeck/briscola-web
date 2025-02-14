@@ -1,14 +1,35 @@
 <div class="max-w-2xl mx-auto">
   <h1>Devgame</h1>
-  <div class="mt-8 flex">
-    <.simple_form for={@new_game} name="Make new game" action="/debug/newgame" method="post">
-      <.input field={@new_game[:players]} name="players" type="number" label="Players" value="2" />
-      <:actions>
-        <.button class="bg-brand hover:bg-brand/80" type="submit">Create Game</.button>
-      </:actions>
-    </.simple_form>
+  <div class="flex flex-row items-end">
+    <div>
+      <.simple_form for={@new_game} name="Make new game" action="/debug/newgame" method="post">
+        <.input
+          field={@new_game[:players]}
+          name="players"
+          type="number"
+          label="Players"
+          value="2"
+        />
+        <:actions>
+          <.button class="bg-brand hover:bg-brand/80" type="submit">Create Game</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    <div>
+      <.simple_form
+        for={%{}}
+        name="New single player game"
+        action="/debug/newgame/sp"
+        method="post"
+      >
+        <:actions>
+          <.button class="bg-brand hover:bg-brand/80" type="submit">
+            Create Single Player Game
+          </.button>
+        </:actions>
+      </.simple_form>
+    </div>
   </div>
-
   <div class="mt-8 flex flex-wrap">
     <%= for {id, pid, state} <- @games do %>
       <div class="p-4 bg-white rounded shadow m-2 mb-4">

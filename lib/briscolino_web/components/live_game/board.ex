@@ -27,6 +27,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
       <.player_list game={@game} />
       <div class="pl-64 w-screen h-screen">
         <.trick game={@game} />
+        <%= if @player_index do %>
+          <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} />
+        <% end %>
       </div>
     </div>
     """
@@ -44,6 +47,19 @@ defmodule BriscolinoWeb.LiveGame.Board do
     socket =
       socket
       |> put_flash(:info, "#{who_won} won the trick.")
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("play-0", _params, socket) do
+    card_idx = 0
+
+    socket =
+      case(Briscolino.GameServer.play(socket.assigns.game_pid, card_idx)) do
+        {:ok, _game} -> put_flash(socket, :info, "Played card #{card_idx}")
+        {:error, err} -> put_flash(socket, :error, "Error playing card: #{err}")
+      end
 
     {:noreply, socket}
   end

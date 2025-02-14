@@ -2,14 +2,30 @@ defmodule Briscolino.GameSupervisor do
   use DynamicSupervisor
 
   alias Briscolino.GameServer
+  alias Briscolino.GameServer.ServerState
   alias Briscolino.GameServer.PlayerInfo
 
   def start_link(arg) do
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
-  @spec new_game() :: {:error, any()} | {:ok, pid()}
-  def new_game(_opts \\ []) do
+  @spec new_game([PlayerInfo.t()]) :: {:error, any()} | {:ok, pid()}
+  def new_game(players) do
+    IO.inspect(players)
+    game_id = Briscolino.ShortId.new()
+    gamestate = Briscola.Game.new(players: Enum.count(players))
+
+    state = %ServerState{
+      playerinfo: players,
+      gamestate: gamestate,
+      id: game_id
+    }
+
+    make_game(state)
+  end
+
+  @spec new_ai_game() :: {:error, any()} | {:ok, pid()}
+  def new_ai_game() do
     players = 4
     game_id = Briscolino.ShortId.new()
     gamestate = Briscola.Game.new(players: players)
@@ -20,16 +36,21 @@ defmodule Briscolino.GameSupervisor do
         players
       )
 
-    initial_state = %GameServer.ServerState{
+    state = %ServerState{
       playerinfo: players,
       gamestate: gamestate,
       id: game_id
     }
 
+    make_game(state)
+  end
+
+  @spec make_game(ServerState.t()) :: {:error, any()} | {:ok, pid()}
+  defp make_game(%ServerState{} = state) do
     case DynamicSupervisor.start_child(__MODULE__, %{
            id: :ignored,
            restart: :transient,
-           start: {Briscolino.GameServer, :start_link, [initial_state]}
+           start: {Briscolino.GameServer, :start_link, [state]}
          }) do
       {:error, error} -> {:error, error}
       {:ok, pid} -> {:ok, pid}

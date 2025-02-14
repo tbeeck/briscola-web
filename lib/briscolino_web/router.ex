@@ -37,6 +37,7 @@ defmodule BriscolinoWeb.Router do
 
       get "/viewgame/:id", DebugController, :view_game
       post "/newgame", DebugController, :create_game
+      post "/newgame/sp", DebugController, :create_game_sp
       post "/viewgame/:id/play/:card", DebugController, :play_card
       delete "/endgame/:id", DebugController, :end_game
 

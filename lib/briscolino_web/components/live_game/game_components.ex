@@ -5,6 +5,21 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Gettext, backend: BriscolinoWeb.Gettext
 
   @doc """
+  Player's hand
+  """
+  attr :cards, :list, required: true
+
+  def hand(assigns) do
+    ~H"""
+    <div class="relative h-64 w-128 flex flex-wrap items-center justify-center">
+      <%= for {card, idx} <- Enum.with_index(@cards) do %>
+        <.card card={card} phx-click={"play-#{idx}"} />
+      <% end %>
+    </div>
+    """
+  end
+
+  @doc """
   Render the trick pile
   """
   attr :game, ServerState, required: true
@@ -29,10 +44,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Render a card.
   """
   attr :card, Briscola.Card, required: true
+  attr :rest, :global
 
   def card(assigns) do
     ~H"""
-    <div class="w-12 h-24 justify-center border">
+    <div class="w-12 h-24 justify-center border" {@rest}>
       <p>{@card.rank} of {@card.suit}</p>
     </div>
     """
@@ -69,16 +85,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
-  def animated_elipsis(assigns) do
-    ~H"""
-    <div class="w-auto flex flex-row items-center">
-      <div class="bg-gray-500 w-2 h-2" />
-      <div class="bg-gray-500 w-2 h-2 ml-2" />
-      <div class="bg-gray-500 w-2 h-2 ml-2" />
-    </div>
-    """
-  end
-
   defp player_status(%ServerState{} = state, player_index) do
     if state.gamestate.action_on == player_index and
          !Briscola.Game.needs_redeal?(state.gamestate) and
@@ -92,6 +98,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     else
       ""
     end
+  end
+
+  def animated_elipsis(assigns) do
+    ~H"""
+    <div class="w-auto flex flex-row items-center">
+      <div class="bg-gray-500 w-2 h-2" />
+      <div class="bg-gray-500 w-2 h-2 ml-2" />
+      <div class="bg-gray-500 w-2 h-2 ml-2" />
+    </div>
+    """
   end
 
   defp player_score(%ServerState{gamestate: game}, player_index),

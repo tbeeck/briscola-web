@@ -1,7 +1,9 @@
 defmodule BriscolinoWeb.DebugController do
+  use BriscolinoWeb, :controller
+
+  alias Briscolino.GameServer.PlayerInfo
   alias Briscolino.GameSupervisor
   alias Briscolino.GameServer
-  use BriscolinoWeb, :controller
 
   def devgame(conn, _params) do
     games =
@@ -17,7 +19,18 @@ defmodule BriscolinoWeb.DebugController do
   def create_game(conn, params) do
     # Create a new game using the parameters from the form.
     players = Map.get(params, "players", "2") |> String.to_integer()
-    {:ok, _pid} = Briscolino.GameSupervisor.new_game(players: players)
+    {:ok, _pid} = Briscolino.GameSupervisor.new_ai_game()
+
+    conn
+    |> put_flash(:info, "Game created successfully")
+    |> redirect(to: "/debug")
+  end
+
+  def create_game_sp(conn, _params) do
+    player_key = Plug.Conn.get_session(conn, :session_id)
+    bot = %PlayerInfo{ai_strategy: Briscola.Strategy.Random, name: "AI Player"}
+    players = [%PlayerInfo{play_token: player_key, name: "You"}] ++ List.duplicate(bot, 3)
+    {:ok, _pid} = Briscolino.GameSupervisor.new_game(players)
 
     conn
     |> put_flash(:info, "Game created successfully")
