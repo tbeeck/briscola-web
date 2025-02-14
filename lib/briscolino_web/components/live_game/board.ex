@@ -53,14 +53,16 @@ defmodule BriscolinoWeb.LiveGame.Board do
   end
 
   @impl true
-  def handle_event("play-0", _params, socket) do
-    card_idx = 0
+  def handle_event("play-0", params, socket), do: play_card(0, params, socket)
+  def handle_event("play-1", params, socket), do: play_card(1, params, socket)
+  def handle_event("play-2", params, socket), do: play_card(2, params, socket)
 
+  defp play_card(index, _params, socket) do
     socket =
       case(
-        Briscolino.GameServer.play(socket.assigns.game_pid, card_idx, socket.assigns.player_id)
+        Briscolino.GameServer.play(socket.assigns.game_pid, index, socket.assigns.player_id)
       ) do
-        {:ok, _game} -> put_flash(socket, :info, "Played card #{card_idx}")
+        {:ok, _game} -> put_flash(socket, :info, "Played card #{index}")
         {:error, err} -> put_flash(socket, :error, "Error playing card: #{err}")
       end
 
