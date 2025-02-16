@@ -16,6 +16,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> assign(:game_pid, pid)
       |> assign(:player_index, player_index(game_info, session))
       |> assign(:player_id, session["session_id"])
+      |> assign(:selected, nil)
 
     Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(game_id))
     {:ok, socket}
@@ -24,12 +25,12 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="bg-board">
       <.player_list game={@game} />
-      <div class="pl-32 w-screen h-screen">
+      <div class="relative pl-32 w-screen h-screen">
         <div class="flex justify-center items-center">
-          <.card_back class="w-32 rotate-90" />
-          <.card card={@game.gamestate.briscola} class="justify-center items-center -z-10" />
+          <.card_back class="absolute w-32 rotate-90" />
+          <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
         </div>
         <.trick game={@game} />
         <%= if @player_index do %>
@@ -66,7 +67,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       case(
         Briscolino.GameServer.play(socket.assigns.game_pid, index, socket.assigns.player_id)
       ) do
-        {:ok, _game} -> put_flash(socket, :info, "Played card #{index}")
+        {:ok, _game} -> socket
         {:error, err} -> put_flash(socket, :error, "Error playing card: #{err}")
       end
 

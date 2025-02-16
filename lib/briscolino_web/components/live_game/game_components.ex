@@ -11,7 +11,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def hand(assigns) do
     ~H"""
-    <div class="relative h-64 w-128 flex flex-wrap items-center justify-center">
+    <div class="relative h-64 w-128 flex flex-wrap items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
         <.card card={card} phx-click={"play-#{idx}"} />
       <% end %>
@@ -48,20 +48,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def card(assigns) do
     ~H"""
-    <div class="w-24 h-48 border m-2" {@rest}>
-      <p>{card_title(@card)} of {@card.suit}</p>
+    <div class="w-24 h-48" {@rest}>
+      <img src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"} class="w-full" />
     </div>
     """
-  end
-
-  defp card_title(%Briscola.Card{rank: rank}) do
-    case rank do
-      1 -> "ace"
-      8 -> "jack"
-      9 -> "knight"
-      10 -> "king"
-      _ -> Integer.to_string(rank)
-    end
   end
 
   @doc """
@@ -86,7 +76,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div id="sidebar" class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
-      <ul class="bg-gray-100 rounded-xl pl-4">
+      <ul class="pl-4 text-white">
         <%= for {idx, info, _playerstate} <- players(@game) do %>
           <li>
             <div class="flex flex-row items-center p-2">
