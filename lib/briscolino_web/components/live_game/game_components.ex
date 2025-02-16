@@ -12,10 +12,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def pile(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center fixed top-0 right-0 ml-2 mt-2">
+    <div class="flex flex-col justify-center items-center fixed bottom-0 right-0 ml-4 mb-4">
       <div class="flex justify-center relative">
-        <.card_back class="absolute bottom-0 top-0 w-28 rotate-[90deg]" />
-        <.card_back class="absolute bottom-0 top-0 w-28 rotate-[94deg]" />
+        <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[90deg]" />
+        <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[94deg]" />
         <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
       </div>
       <div class="flex justify-center w-64">
@@ -83,7 +83,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def hand(assigns) do
     ~H"""
-    <div class="relative h-64 w-128 flex flex-wrap items-center justify-center space-x-4">
+    <div class="relative w-128 flex flex-wrap items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
         <.card card={card} phx-click={"select-#{idx}"} selected={@selected && @selected == idx} />
       <% end %>
@@ -100,10 +100,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   def trick(assigns) do
     ~H"""
     <div class="relative h-64 w-128">
-      <div class="absolute inset-0 flex justify-center items-center -z-10">
-        <img src="/images/board.png" class="w-256 h-64" />
+      <div class="absolute inset-0 flex justify-center items-center">
+        <img src="/images/board.png" class="-z-1"/>
       </div>
-      <div class="flex flex-wrap items-center justify-center h-full space-x-4">
+      <div class="flex flex-wrap items-center justify-center h-full space-x-4 z-1">
         <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
           <.card card={card} />
         <% end %>
@@ -121,7 +121,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def card(assigns) do
     ~H"""
-    <div class={["w-24", "h-48"]} {@rest}>
+    <div class={["w-32", "h-64"]} {@rest}>
       <img
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
         class={[

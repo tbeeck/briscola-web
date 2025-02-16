@@ -28,14 +28,14 @@ defmodule BriscolinoWeb.LiveGame.Board do
     <div class="bg-board">
       <.player_list game={@game} />
       <div class="pl-16 w-screen h-screen">
-        <.pile game={@game} />
         <.trick game={@game} />
         <%= if @player_index do %>
-        <div class="fixed bottom-4 left-1/2 -translate-x-1/2">
-          <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
-        <.action_panel game={@game} selected={@selected} />
-        </div>
+          <div class="fixed bottom-8 left-1/2 -translate-x-1/2">
+            <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
+            <.action_panel game={@game} selected={@selected} />
+          </div>
         <% end %>
+        <.pile game={@game} />
       </div>
     </div>
     """
