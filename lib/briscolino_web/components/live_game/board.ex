@@ -26,16 +26,24 @@ defmodule BriscolinoWeb.LiveGame.Board do
   def render(assigns) do
     ~H"""
     <div class="bg-board">
-      <.player_list game={@game} />
-      <div class="flex justify-center pl-16 w-screen h-screen">
-        <.trick game={@game} />
+      <div class="fixed w-64 x-0 y-0 h-full
+            flex flex-col my-auto justify-center">
+        <.player_list game={@game} />
+      </div>
+
+      <div class="flex justify-center w-screen h-screen">
+        <div class="inline-block mt-[20%]">
+          <.trick game={@game} />
+        </div>
         <%= if @player_index do %>
           <div class="fixed bottom-8 left-1/2 -translate-x-1/2">
             <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
             <.action_panel game={@game} selected={@selected} />
           </div>
         <% end %>
-        <.pile game={@game} />
+        <div class="flex flex-col justify-center items-center fixed bottom-0 right-0 mr-8 mb-8">
+          <.pile game={@game} />
+        </div>
       </div>
     </div>
     """

@@ -12,7 +12,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def pile(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center fixed bottom-0 right-0 ml-4 mb-4">
+    <div>
       <div class="flex justify-center relative">
         <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[90deg]" />
         <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[94deg]" />
@@ -99,7 +99,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def trick(assigns) do
     ~H"""
-    <div class="inline-block mt-24 h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover">
+    <div class="h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover">
       <%!-- <div class="absolute inset-0 flex justify-center items-center">
         <img src="/images/board.png" class="z-0"/>
       </div> --%>
@@ -153,27 +153,24 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list(assigns) do
     ~H"""
-    <div id="sidebar" class="fixed w-64 x-0 y-0 h-full
-            flex flex-col my-auto justify-center">
-      <ul class="pl-4 text-white">
-        <%= for {idx, info, _playerstate} <- players(@game) do %>
-          <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md"]}>
-            <div class="flex flex-row items-center p-2">
-              <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
-              <div class="flex flex-col flex-grow">
-                <div class="text-lg">{info.name}</div>
-                <div class={["flex flex-row items-center"]}>
-                  {player_status(@game, idx)}
-                  <div class="pl-4 text-md">
-                    [ {player_score(@game, idx)} ]
-                  </div>
+    <ul class="pl-4 text-white">
+      <%= for {idx, info, _playerstate} <- players(@game) do %>
+        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md"]}>
+          <div class="flex flex-row items-center p-2">
+            <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
+            <div class="flex flex-col flex-grow">
+              <div class="text-lg">{info.name}</div>
+              <div class={["flex flex-row items-center"]}>
+                {player_status(@game, idx)}
+                <div class="pl-4 text-md">
+                  [ {player_score(@game, idx)} ]
                 </div>
               </div>
             </div>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
     """
   end
 
