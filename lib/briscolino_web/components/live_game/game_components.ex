@@ -38,8 +38,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   attr :selected, :any, required: false, default: nil
 
   def hand(assigns) do
-    IO.inspect(assigns, label: "Hand selected")
-
     ~H"""
     <div class="relative h-64 w-128 flex flex-wrap items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>

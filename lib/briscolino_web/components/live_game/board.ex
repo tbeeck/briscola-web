@@ -81,7 +81,8 @@ defmodule BriscolinoWeb.LiveGame.Board do
   def handle_event("select-2", params, socket), do: select_card(2, params, socket)
 
   @impl true
-  def handle_event("clear-selection", _params, socket), do: {:noreply, assign(socket, :selected, nil)}
+  def handle_event("clear-selection", _params, socket),
+    do: {:noreply, assign(socket, :selected, nil)}
 
   def select_card(card_idx, _params, socket) do
     if hand_length(socket) > card_idx do

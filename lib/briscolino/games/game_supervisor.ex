@@ -11,7 +11,6 @@ defmodule Briscolino.GameSupervisor do
 
   @spec new_game([PlayerInfo.t()]) :: {:error, any()} | {:ok, pid()}
   def new_game(players) do
-    IO.inspect(players)
     game_id = Briscolino.ShortId.new()
     gamestate = Briscola.Game.new(players: Enum.count(players))
 

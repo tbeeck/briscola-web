@@ -16,9 +16,9 @@ defmodule BriscolinoWeb.DebugController do
     render(conn, :devgame, new_game: %{"players" => 2}, games: games)
   end
 
-  def create_game(conn, params) do
+  def create_game(conn, _params) do
     # Create a new game using the parameters from the form.
-    players = Map.get(params, "players", "2") |> String.to_integer()
+    # players = Map.get(params, "players", "2") |> String.to_integer()
     {:ok, _pid} = Briscolino.GameSupervisor.new_ai_game()
 
     conn
