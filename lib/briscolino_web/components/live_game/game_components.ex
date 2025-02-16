@@ -29,7 +29,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div class="relative h-64 w-128">
       <div class="absolute inset-0 flex justify-center items-center -z-10">
-        <img src="/images/board.png" class="w-128 h-32" />
+        <img src="/images/board.png" class="w-256 h-64" />
       </div>
       <div class="flex flex-wrap items-center justify-center h-full space-x-4">
         <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
@@ -48,8 +48,31 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def card(assigns) do
     ~H"""
-    <div class="w-12 h-24 justify-center border" {@rest}>
-      <p>{@card.rank} of {@card.suit}</p>
+    <div class="w-24 h-48 border m-2" {@rest}>
+      <p>{card_title(@card)} of {@card.suit}</p>
+    </div>
+    """
+  end
+
+  defp card_title(%Briscola.Card{rank: rank}) do
+    case rank do
+      1 -> "ace"
+      8 -> "jack"
+      9 -> "knight"
+      10 -> "king"
+      _ -> Integer.to_string(rank)
+    end
+  end
+
+  @doc """
+  Render face-down card.
+  """
+  attr :rest, :global
+
+  def card_back(assigns) do
+    ~H"""
+    <div {@rest}>
+      <img src="/images/card_back.png" />
     </div>
     """
   end
