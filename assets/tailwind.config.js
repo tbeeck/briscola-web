@@ -15,7 +15,8 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-        board: "#17191C"
+        board: "#17191C",
+        card_highlight: "#B9BACC"
       }
     },
   },

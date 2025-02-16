@@ -80,7 +80,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     <div class={["w-24", "h-48"]} {@rest}>
       <img
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
-        class={["w-full", @selected == true && "outline-4 outline-dashed outline-blue-500"]}
+        class={[
+          "w-full",
+          @selected == true && "outline-2 outline-solid outline-card_highlight rounded-md"
+        ]}
       />
     </div>
     """
