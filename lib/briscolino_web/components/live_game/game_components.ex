@@ -12,23 +12,23 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def action_panel(assigns) do
     ~H"""
-    <div class="flex justify-center items-center space-x-4 text-xl">
+    <div class="flex justify-center items-center space-x-4 text-lg">
       <button
-        class="w-[350px] h-[84px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat space-x-2"
-        disabled={@selected == nil}
+        class="w-[175px] h-[42px]
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
         phx-click="clear-selection"
+        disabled={@selected == nil}
       >
         <span class="text-gray-400">[ X ]</span>
         <span class="disabled:text-gray-100 text-red-100">Clear</span>
       </button>
       <button
-        class="w-[350px] h-[84px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat disabled:text-gray-100"
+        class="w-[175px] h-[42px]
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
         phx-click="play"
         disabled={@selected == nil}
       >
-        <span class="text-gray-400">[ |-> ]</span>
+        <span class="text-gray-400">[ <span class="text-xl">↦</span> ]</span>
         <span class="text-green-100">Play</span>
       </button>
     </div>
