@@ -99,11 +99,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def trick(assigns) do
     ~H"""
-    <div class="relative h-64 w-128">
-      <div class="absolute inset-0 flex justify-center items-center">
-        <img src="/images/board.png" class="-z-1"/>
-      </div>
-      <div class="flex flex-wrap items-center justify-center h-full space-x-4 z-1">
+    <div class="inline-block mt-24 h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover">
+      <%!-- <div class="absolute inset-0 flex justify-center items-center">
+        <img src="/images/board.png" class="z-0"/>
+      </div> --%>
+      <div class="relative flex flex-wrap items-center justify-center h-full space-x-4 z-10">
         <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
           <.card card={card} />
         <% end %>
