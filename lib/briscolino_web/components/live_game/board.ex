@@ -31,9 +31,11 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <.pile game={@game} />
         <.trick game={@game} />
         <%= if @player_index do %>
+        <div class="fixed bottom-4 left-1/2 -translate-x-1/2">
           <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
-        <% end %>
         <.action_panel game={@game} selected={@selected} />
+        </div>
+        <% end %>
       </div>
     </div>
     """
