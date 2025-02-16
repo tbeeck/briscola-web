@@ -55,21 +55,21 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     <div class="flex justify-center items-center space-x-4 text-lg">
       <button
         class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2 disabled:text-gray-300 text-red-400"
         phx-click="clear-selection"
         disabled={@selected == nil}
       >
         <span class="text-gray-400">[ X ]</span>
-        <span class="disabled:text-gray-100 text-red-100">Clear</span>
+        <span>Clear</span>
       </button>
       <button
         class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2 disabled:text-gray-300 text-green-400"
         phx-click="play"
         disabled={@selected == nil}
       >
-        <span class="text-gray-400">[ <span class="text-xl">↦</span> ]</span>
-        <span class="text-green-100">Play</span>
+        <span class="text-gray-400">[ ↦ ]</span>
+        <span>Play</span>
       </button>
     </div>
     """
