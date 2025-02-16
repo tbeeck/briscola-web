@@ -12,14 +12,19 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def action_panel(assigns) do
     ~H"""
-    <div class="disabled:text-red text-white">
+    <div>
       <button
+        class="disabled:text-gray-100 text-red-300"
         disabled={@selected == nil}
         phx-click="clear-selection"
       >
         Clear
       </button>
-      <button phx-click="play" disabled={@selected == nil}>
+      <button
+        class="disabled:text-gray-100 text-green-300"
+        phx-click="play"
+        disabled={@selected == nil}
+      >
         Play
       </button>
     </div>
@@ -30,13 +35,15 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Player's hand
   """
   attr :cards, :list, required: true
-  attr :selected, :any, required: false
+  attr :selected, :any, required: false, default: nil
 
   def hand(assigns) do
+    IO.inspect(assigns, label: "Hand selected")
+
     ~H"""
     <div class="relative h-64 w-128 flex flex-wrap items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
-        <.card card={card} phx-click={"select-#{idx}"} />
+        <.card card={card} phx-click={"select-#{idx}"} selected={@selected && @selected == idx} />
       <% end %>
     </div>
     """
@@ -67,12 +74,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Render a card.
   """
   attr :card, Briscola.Card, required: true
+  attr :selected, :boolean, required: false, default: false
   attr :rest, :global
 
   def card(assigns) do
     ~H"""
-    <div class="w-24 h-48" {@rest}>
-      <img src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"} class="w-full" />
+    <div class={["w-24", "h-48"]} {@rest}>
+      <img
+        src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
+        class={["w-full", @selected == true && "outline-4 outline-dashed outline-blue-500"]}
+      />
     </div>
     """
   end

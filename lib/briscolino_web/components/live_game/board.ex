@@ -34,7 +34,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         </div>
         <.trick game={@game} />
         <%= if @player_index do %>
-          <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} />
+          <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
         <% end %>
         <.action_panel game={@game} selected={@selected} />
       </div>
@@ -72,13 +72,16 @@ defmodule BriscolinoWeb.LiveGame.Board do
         {:error, err} -> put_flash(socket, :error, "Error playing card: #{err}")
       end
 
-    {:noreply, socket}
+    {:noreply, assign(socket, :selected, nil)}
   end
 
   @impl true
   def handle_event("select-0", params, socket), do: select_card(0, params, socket)
   def handle_event("select-1", params, socket), do: select_card(1, params, socket)
   def handle_event("select-2", params, socket), do: select_card(2, params, socket)
+
+  @impl true
+  def handle_event("clear-selection", _params, socket), do: {:noreply, assign(socket, :selected, nil)}
 
   def select_card(card_idx, _params, socket) do
     if hand_length(socket) > card_idx do
