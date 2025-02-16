@@ -30,11 +30,13 @@ defmodule BriscolinoWeb.DebugController do
     player_key = Plug.Conn.get_session(conn, :session_id)
     bot = %PlayerInfo{ai_strategy: Briscola.Strategy.Random, name: "AI Player"}
     players = [%PlayerInfo{play_token: player_key, name: "You"}] ++ List.duplicate(bot, 3)
-    {:ok, _pid} = Briscolino.GameSupervisor.new_game(players)
+    {:ok, pid} = Briscolino.GameSupervisor.new_game(players)
+
+    {:ok, state} = Briscolino.GameServer.state(pid)
 
     conn
     |> put_flash(:info, "Game created successfully")
-    |> redirect(to: "/debug")
+    |> redirect(to: "/game/#{state.id}")
   end
 
   def end_game(conn, params) do
