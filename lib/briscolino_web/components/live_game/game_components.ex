@@ -83,7 +83,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def hand(assigns) do
     ~H"""
-    <div class="relative w-128 flex flex-wrap items-center justify-center space-x-4">
+    <div class="w-128 flex items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
         <.card card={card} phx-click={"select-#{idx}"} selected={@selected && @selected == idx} />
       <% end %>
@@ -100,10 +100,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   def trick(assigns) do
     ~H"""
     <div class="h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover">
-      <%!-- <div class="absolute inset-0 flex justify-center items-center">
-        <img src="/images/board.png" class="z-0"/>
-      </div> --%>
-      <div class="relative flex flex-wrap items-center justify-center h-full space-x-4 z-10">
+      <div class="flex items-center justify-center h-full space-x-4 z-10">
         <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
           <.card card={card} />
         <% end %>
