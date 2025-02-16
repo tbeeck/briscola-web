@@ -27,7 +27,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
     ~H"""
     <div class="bg-board">
       <.player_list game={@game} />
-      <div class="relative pl-16 w-screen h-screen">
+      <div class="pl-16 w-screen h-screen">
         <.pile game={@game} />
         <.trick game={@game} />
         <%= if @player_index do %>
