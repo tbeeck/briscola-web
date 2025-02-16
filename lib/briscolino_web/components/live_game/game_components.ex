@@ -82,7 +82,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
         class={[
           "w-full",
-          @selected == true && "outline-2 outline-solid outline-card_highlight rounded-md"
+          @selected == true && "outline outline-2 outline-offset-2 outline-card_highlight rounded-md"
         ]}
       />
     </div>
