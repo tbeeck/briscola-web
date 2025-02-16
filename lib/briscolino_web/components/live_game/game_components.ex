@@ -12,7 +12,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def pile(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center fixed top-0 right-0">
+    <div class="flex flex-col justify-center items-center fixed top-0 right-0 ml-2 mt-2">
       <div class="flex justify-center relative">
         <.card_back class="absolute bottom-0 top-0 w-28 rotate-[90deg]" />
         <.card_back class="absolute bottom-0 top-0 w-28 rotate-[94deg]" />
