@@ -118,7 +118,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def card(assigns) do
     ~H"""
-    <div class={["w-32", "h-64"]} {@rest}>
+    <div class="w-32 h-64 flex items-center" {@rest}>
       <img
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
         class={[
