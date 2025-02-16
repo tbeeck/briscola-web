@@ -27,7 +27,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
     ~H"""
     <div class="bg-board">
       <.player_list game={@game} />
-      <div class="relative pl-32 w-screen h-screen">
+      <div class="relative pl-16 w-screen h-screen">
         <div class="flex justify-center items-center">
           <.card_back class="absolute w-32 rotate-90" />
           <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
@@ -36,6 +36,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <%= if @player_index do %>
           <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} />
         <% end %>
+        <.action_panel game={@game} selected={@selected} />
       </div>
     </div>
     """
@@ -58,14 +59,14 @@ defmodule BriscolinoWeb.LiveGame.Board do
   end
 
   @impl true
-  def handle_event("play-0", params, socket), do: play_card(0, params, socket)
-  def handle_event("play-1", params, socket), do: play_card(1, params, socket)
-  def handle_event("play-2", params, socket), do: play_card(2, params, socket)
-
-  defp play_card(index, _params, socket) do
+  def handle_event("play", _params, socket) do
     socket =
       case(
-        Briscolino.GameServer.play(socket.assigns.game_pid, index, socket.assigns.player_id)
+        Briscolino.GameServer.play(
+          socket.assigns.game_pid,
+          socket.assigns.selected,
+          socket.assigns.player_id
+        )
       ) do
         {:ok, _game} -> socket
         {:error, err} -> put_flash(socket, :error, "Error playing card: #{err}")
@@ -74,8 +75,28 @@ defmodule BriscolinoWeb.LiveGame.Board do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("select-0", params, socket), do: select_card(0, params, socket)
+  def handle_event("select-1", params, socket), do: select_card(1, params, socket)
+  def handle_event("select-2", params, socket), do: select_card(2, params, socket)
+
+  def select_card(card_idx, _params, socket) do
+    if hand_length(socket) > card_idx do
+      {:noreply, assign(socket, :selected, card_idx)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   defp player_index(%ServerState{playerinfo: players}, session) do
     play_token = session["session_id"]
     Enum.find_index(players, fn p -> p.play_token == play_token end)
+  end
+
+  defp hand_length(socket) do
+    case socket.assigns.player_index do
+      nil -> 0
+      idx -> length(Enum.at(socket.assigns.game.gamestate.players, idx).hand)
+    end
   end
 end

@@ -5,15 +5,38 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Gettext, backend: BriscolinoWeb.Gettext
 
   @doc """
+  Buttons for playing a card / clearing your selection.
+  """
+  attr :game, ServerState, required: true
+  attr :selected, :any, required: true
+
+  def action_panel(assigns) do
+    ~H"""
+    <div class="disabled:text-red text-white">
+      <button
+        disabled={@selected == nil}
+        phx-click="clear-selection"
+      >
+        Clear
+      </button>
+      <button phx-click="play" disabled={@selected == nil}>
+        Play
+      </button>
+    </div>
+    """
+  end
+
+  @doc """
   Player's hand
   """
   attr :cards, :list, required: true
+  attr :selected, :any, required: false
 
   def hand(assigns) do
     ~H"""
     <div class="relative h-64 w-128 flex flex-wrap items-center justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
-        <.card card={card} phx-click={"play-#{idx}"} />
+        <.card card={card} phx-click={"select-#{idx}"} />
       <% end %>
     </div>
     """
