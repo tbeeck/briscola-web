@@ -1,8 +1,48 @@
 defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Phoenix.Component
 
+  alias Briscola.Card
   alias Briscolino.GameServer.ServerState
   use Gettext, backend: BriscolinoWeb.Gettext
+
+  @doc """
+  Card pile with briscola underneath
+  """
+  attr :game, ServerState, required: true
+
+  def pile(assigns) do
+    ~H"""
+    <div class="flex flex-col justify-center">
+      <div class="flex justify-center items-end relative">
+        <.card_back class="absolute bottom-0 top-0 w-28 rotate-[90deg]" />
+        <.card_back class="absolute bottom-0 top-0 w-28 rotate-[94deg]" />
+        <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
+      </div>
+      <div class="flex justify-center w-64">
+        <.briscola_badge card={@game.gamestate.briscola} />
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Badge displaying the briscola for the game
+  """
+  attr :card, Card, required: true
+
+  def briscola_badge(assigns) do
+    ~H"""
+    <div class="bg-gray-900 rounded-lg text-white text-md">
+      <div class="flex flex-row items-center flex-wrap p-2">
+        <span class="mx-4">Briscola</span>
+        <div class="flex flex-row items-center bg-gray-800 rounded-lg py-1 px-4 space-x-2">
+          <img src={"/images/cards/fantasy/#{@card.suit}.png"} class="w-4 h-4" />
+          <span>{Integer.to_string(@card.rank)}</span>
+        </div>
+      </div>
+    </div>
+    """
+  end
 
   @doc """
   Buttons for playing a card / clearing your selection.
@@ -117,12 +157,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             flex flex-col my-auto justify-center">
       <ul class="pl-4 text-white">
         <%= for {idx, info, _playerstate} <- players(@game) do %>
-          <li>
+          <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md"]}>
             <div class="flex flex-row items-center p-2">
               <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
               <div class="flex flex-col flex-grow">
                 <div class="text-lg">{info.name}</div>
-                <div class="flex flex-row items-center">
+                <div class={["flex flex-row items-center"]}>
                   {player_status(@game, idx)}
                   <div class="pl-4 text-md">
                     [ {player_score(@game, idx)} ]
@@ -137,11 +177,15 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
+  defp players_turn(state, player_index) do
+    state.gamestate.action_on == player_index and
+      !Briscola.Game.needs_redeal?(state.gamestate) and
+      !Briscola.Game.should_score_trick?(state.gamestate) and
+      !Briscola.Game.game_over?(state.gamestate)
+  end
+
   defp player_status(%ServerState{} = state, player_index) do
-    if state.gamestate.action_on == player_index and
-         !Briscola.Game.needs_redeal?(state.gamestate) and
-         !Briscola.Game.should_score_trick?(state.gamestate) and
-         !Briscola.Game.game_over?(state.gamestate) do
+    if players_turn(state, player_index) do
       assigns = %{}
 
       ~H"""

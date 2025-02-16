@@ -28,10 +28,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
     <div class="bg-board">
       <.player_list game={@game} />
       <div class="relative pl-16 w-screen h-screen">
-        <div class="flex justify-center items-center">
-          <.card_back class="absolute w-32 rotate-90" />
-          <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
-        </div>
+        <.pile game={@game} />
         <.trick game={@game} />
         <%= if @player_index do %>
           <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
