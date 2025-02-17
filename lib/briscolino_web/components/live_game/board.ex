@@ -20,7 +20,8 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> assign(:status_message, "...")
 
     # Update the status message & timer
-    socket = assign(socket, :status_message, get_status_message(state, socket))
+    socket =
+      assign(socket, :status_message, get_status_message(state, socket))
       |> update_timer(state)
 
     Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(game_id))
