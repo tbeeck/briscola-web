@@ -21,7 +21,7 @@ defmodule BriscolinoWeb.DebugGameLive do
     ~H"""
     <div class="flex flex-row">
       <div>
-        <.simple_form for={%{}} method="delete" action={"/debug/endgame/#{@game.id}"}>
+        <.simple_form for={%{}} method="delete" action={~p"/dev/endgame/#{@game.id}"}>
           <:actions>
             <.button class="bg-brand hover:bg-brand/80" type="submit">End Game</.button>
           </:actions>

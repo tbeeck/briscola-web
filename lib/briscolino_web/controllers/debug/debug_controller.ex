@@ -23,7 +23,7 @@ defmodule BriscolinoWeb.DebugController do
 
     conn
     |> put_flash(:info, "Game created successfully")
-    |> redirect(to: "/debug")
+    |> redirect(to: "/dev")
   end
 
   def create_game_sp(conn, _params) do
@@ -49,11 +49,11 @@ defmodule BriscolinoWeb.DebugController do
 
       conn
       |> put_flash(:info, "Game ended successfully")
-      |> redirect(to: "/debug")
+      |> redirect(to: "/dev")
     else
       conn
       |> put_flash(:error, "Game not found")
-      |> redirect(to: "/debug")
+      |> redirect(to: "/dev")
     end
   end
 
@@ -75,12 +75,12 @@ defmodule BriscolinoWeb.DebugController do
       {:ok, _} ->
         conn
         |> put_flash(:info, "Card played successfully")
-        |> redirect(to: "/debug/viewgame/#{game_id}")
+        |> redirect(to: "/dev/viewgame/#{game_id}")
 
       {:error, err} ->
         conn
         |> put_flash(:error, "Error playing card: #{err}")
-        |> redirect(to: "/debug/viewgame/#{game_id}")
+        |> redirect(to: "/dev/viewgame/#{game_id}")
     end
   end
 end

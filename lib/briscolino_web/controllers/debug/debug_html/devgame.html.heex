@@ -1,8 +1,9 @@
 <div class="max-w-2xl mx-auto">
   <h1>Devgame</h1>
+  <a href={~p"/dev/dashboard"}>Dashboard</a>
   <div class="flex flex-row items-end">
     <div>
-      <.simple_form for={@new_game} name="Make new game" action="/debug/newgame" method="post">
+      <.simple_form for={@new_game} name="Make new game" action="/dev/newgame" method="post">
         <.input
           field={@new_game[:players]}
           name="players"
@@ -16,12 +17,7 @@
       </.simple_form>
     </div>
     <div>
-      <.simple_form
-        for={%{}}
-        name="New single player game"
-        action="/debug/newgame/sp"
-        method="post"
-      >
+      <.simple_form for={%{}} name="New single player game" action="/dev/newgame/sp" method="post">
         <:actions>
           <.button class="bg-brand hover:bg-brand/80" type="submit">
             Create Single Player Game
@@ -37,8 +33,8 @@
         <h3>{id}</h3>
         <h3>{inspect(pid)}</h3>
         <.game_details game={state.gamestate} />
-        <.link href={"/debug/livegame/#{id}"}>View</.link>
-        <.link href={"/game/#{id}"}>Playerview</.link>
+        <.link href={~p"/dev/livegame/#{id}"}>View</.link>
+        <.link href={~p"/game/#{id}"}>Playerview</.link>
       </div>
     <% end %>
   </div>

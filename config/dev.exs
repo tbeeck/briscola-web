@@ -52,9 +52,6 @@ config :briscolino, BriscolinoWeb.Endpoint,
     ]
   ]
 
-# Enable dev routes for dashboard and mailbox
-config :briscolino, dev_routes: true
-
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
@@ -73,3 +70,6 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Default user/pass for dev, so environment variables are not required
+config :briscolino, :admin_auth, username: "admin", password: "admin"
