@@ -4,6 +4,14 @@ defmodule Briscolino.GameServer do
   @bot_think_time Application.compile_env(:briscolino, [:game_settings, :bot_think_time])
   @score_time Application.compile_env(:briscolino, [:game_settings, :score_time])
   @redeal_time Application.compile_env(:briscolino, [:game_settings, :redeal_time])
+  @player_turn_time Application.compile_env(:briscolino, [:game_settings, :player_turn_time])
+
+  defmodule GameClock do
+    @type t() :: %__MODULE__{
+            timer: reference() | nil
+          }
+    defstruct [:timer]
+  end
 
   defmodule PlayerInfo do
     @type t() :: %__MODULE__{
@@ -18,9 +26,10 @@ defmodule Briscolino.GameServer do
     @type t() :: %__MODULE__{
             gamestate: Briscola.Game.t(),
             playerinfo: [PlayerInfo.t()],
-            id: binary()
+            id: binary(),
+            clock: GameClock.t()
           }
-    defstruct [:gamestate, :playerinfo, :id]
+    defstruct [:gamestate, :playerinfo, :id, :clock]
   end
 
   def game_topic(game_id), do: "gamestate:#{game_id}"
@@ -70,7 +79,7 @@ defmodule Briscolino.GameServer do
 
   @impl true
   def init(state) do
-    schedule_transition(state)
+    state = schedule_transition(state)
     {:ok, state}
   end
 
@@ -102,6 +111,14 @@ defmodule Briscolino.GameServer do
     else
       {:reply, nil, state}
     end
+  end
+
+  @impl true
+  def handle_info(:player_timer_expired, %ServerState{gamestate: game} = state) do
+    # Play a random card
+    random_card_idx = Briscola.Strategy.Random.choose_card(game, game.action_on)
+    {:reply, _, new_state} = handle_call({:play, random_card_idx}, self(), state)
+    {:noreply, new_state}
   end
 
   @impl true
@@ -152,25 +169,32 @@ defmodule Briscolino.GameServer do
     end
   end
 
-  defp schedule_transition(%ServerState{gamestate: game} = state) do
-    cond do
-      Briscola.Game.should_score_trick?(game) ->
-        Process.send_after(self(), :score, @score_time)
-
-      Briscola.Game.needs_redeal?(game) ->
-        Process.send_after(self(), :redeal, @redeal_time)
-
-      action_on_ai(state) && !Briscola.Game.game_over?(game) ->
-        Process.send_after(self(), :play_ai, @bot_think_time)
-
-      true ->
-        nil
+  defp schedule_transition(%ServerState{gamestate: game, clock: clock} = state) do
+    case clock.timer do
+      nil -> nil
+      timer -> Process.cancel_timer(timer)
     end
 
-    state
+    timer =
+      cond do
+        Briscola.Game.should_score_trick?(game) ->
+          Process.send_after(self(), :score, @score_time)
+
+        Briscola.Game.needs_redeal?(game) ->
+          Process.send_after(self(), :redeal, @redeal_time)
+
+        action_on_ai?(state) && !Briscola.Game.game_over?(game) ->
+          Process.send_after(self(), :play_ai, @bot_think_time)
+
+        true ->
+          # It's a player's turn -- force a move after turn is over
+          Process.send_after(self(), :player_timer_expired, @player_turn_time)
+      end
+
+    %ServerState{state | clock: %GameClock{clock | timer: timer}}
   end
 
-  defp action_on_ai(%ServerState{} = state), do: get_ai_strategy(state) != nil
+  defp action_on_ai?(%ServerState{} = state), do: get_ai_strategy(state) != nil
 
   defp get_ai_strategy(%ServerState{gamestate: game, playerinfo: players}),
     do: Enum.at(players, game.action_on).ai_strategy

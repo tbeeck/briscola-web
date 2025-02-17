@@ -1,6 +1,7 @@
 defmodule Briscolino.GameSupervisor do
   use DynamicSupervisor
 
+  alias Briscolino.GameServer.GameClock
   alias Briscolino.GameServer
   alias Briscolino.GameServer.ServerState
   alias Briscolino.GameServer.PlayerInfo
@@ -17,7 +18,8 @@ defmodule Briscolino.GameSupervisor do
     state = %ServerState{
       playerinfo: players,
       gamestate: gamestate,
-      id: game_id
+      id: game_id,
+      clock: %GameClock{timer: nil}
     }
 
     make_game(state)

@@ -74,6 +74,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       socket
       |> assign(:game, state)
       |> assign(:status_message, new_message)
+      |> push_event("timer", %{"remaining" => Process.read_timer(state.clock.timer)})
 
     {:noreply, socket}
   end
