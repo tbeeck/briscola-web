@@ -4,12 +4,12 @@
 
 /* This file is for your main application CSS */
 @font-face {
-	font-family: 'Inconsolata';
-	src: url('/fonts/Inconsolata-VariableFont_wdth,wght.tff') format('tff');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'Inconsolata';
+    src: url('/fonts/Inconsolata-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 body {
-  font-family: 'Inconsolata', sans-serif;
+    font-family: 'Inconsolata', sans-serif;
 }
