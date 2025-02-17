@@ -3,3 +3,13 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+@font-face {
+	font-family: 'Inconsolata';
+	src: url('/fonts/Inconsolata-VariableFont_wdth,wght.tff') format('tff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+  font-family: 'Inconsolata', sans-serif;
+}

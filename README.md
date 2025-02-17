@@ -16,3 +16,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+
+## Attributions
+Font: https://fonts.google.com/specimen/Inconsolata/license?query=Inconsolata
