@@ -49,8 +49,4 @@ defmodule BriscolinoWeb.Router do
 
     live_dashboard "/dashboard", metrics: BriscolinoWeb.Telemetry
   end
-
-  scope "/dev" do
-    pipe_through [:browser, :admin]
-  end
 end
