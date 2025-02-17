@@ -19,8 +19,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> assign(:selected, nil)
       |> assign(:status_message, "...")
 
-    # Update the status message
+    # Update the status message & timer
     socket = assign(socket, :status_message, get_status_message(state, socket))
+      |> update_timer(state)
 
     Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(game_id))
     {:ok, socket}
@@ -74,7 +75,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       socket
       |> assign(:game, state)
       |> assign(:status_message, new_message)
-      |> push_event("timer", %{"remaining" => Process.read_timer(state.clock.timer)})
+      |> update_timer(state)
 
     {:noreply, socket}
   end
@@ -151,6 +152,13 @@ defmodule BriscolinoWeb.LiveGame.Board do
           Enum.at(players, game.action_on).name
 
         "#{player_name} is thinking..."
+    end
+  end
+
+  defp update_timer(socket, %ServerState{clock: clock}) do
+    case clock.timer do
+      nil -> socket
+      timer -> push_event(socket, "timer", %{"remaining" => Process.read_timer(timer)})
     end
   end
 end
