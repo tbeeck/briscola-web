@@ -31,6 +31,16 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <.player_list game={@game} />
       </div>
 
+      <div class="absolute w-1/2 top-0 left-1/2 -translate-x-1/2 h-2.5 bg-gray-200 rounded-full">
+        <div
+          id="game-timer"
+          phx-hook="GameTimer"
+          class="h-2.5 bg-blue-600 rounded-full"
+          style="width: 0%"
+        >
+        </div>
+      </div>
+
       <div class="flex justify-center w-screen h-screen">
         <div class="inline-block mt-[20%]">
           <.trick game={@game} />
