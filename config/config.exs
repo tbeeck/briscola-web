@@ -7,6 +7,15 @@
 # General application configuration
 import Config
 
+# Multiplayer settings
+config :briscolino,
+  game_settings: [
+    bot_think_time: 1000,
+    redeal_time: 2000,
+    score_time: 1000,
+    player_turn_time: 10_000
+  ]
+
 config :briscolino,
   generators: [timestamp_type: :utc_datetime]
 

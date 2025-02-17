@@ -1,6 +1,10 @@
 defmodule Briscolino.GameServer do
   use GenServer
 
+  @bot_think_time Application.compile_env(:briscolino, [:game_settings, :bot_think_time])
+  @score_time Application.compile_env(:briscolino, [:game_settings, :score_time])
+  @redeal_time Application.compile_env(:briscolino, [:game_settings, :redeal_time])
+
   defmodule PlayerInfo do
     @type t() :: %__MODULE__{
             play_token: String.t(),
@@ -151,13 +155,13 @@ defmodule Briscolino.GameServer do
   defp schedule_transition(%ServerState{gamestate: game} = state) do
     cond do
       Briscola.Game.should_score_trick?(game) ->
-        Process.send_after(self(), :score, 1000)
+        Process.send_after(self(), :score, @score_time)
 
       Briscola.Game.needs_redeal?(game) ->
-        Process.send_after(self(), :redeal, 2000)
+        Process.send_after(self(), :redeal, @redeal_time)
 
       action_on_ai(state) && !Briscola.Game.game_over?(game) ->
-        Process.send_after(self(), :play_ai, 1000)
+        Process.send_after(self(), :play_ai, @bot_think_time)
 
       true ->
         nil
