@@ -25,7 +25,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="bg-board">
+    <div class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
         <.player_list game={@game} />
@@ -41,8 +41,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
         </div>
       </div>
 
-      <div class="flex justify-center w-screen h-screen">
-        <div class="inline-block mt-[20%]">
+      <div class="flex flex-col justify-center items-center">
+        <div class="mt-20">Message box</div>
+        <div class="mt-20">
           <.trick game={@game} />
         </div>
         <%= if @player_index do %>
