@@ -9,6 +9,10 @@ const GameTimer = {
       this.end = deadline_end;
     });
     let update = () => {
+      let now = Date.now();
+      if (now > this.end + 100) {
+        return;
+      }
       let percent = Math.min(
         1 - (this.end - Date.now()) / (this.end - this.start),
         1
