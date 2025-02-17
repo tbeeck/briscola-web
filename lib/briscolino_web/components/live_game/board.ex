@@ -9,14 +9,18 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def mount(%{"id" => game_id}, session, socket) do
     pid = Briscolino.GameSupervisor.get_game_pid(game_id)
-    {:ok, game_info} = Briscolino.GameServer.state(pid)
+    {:ok, state} = Briscolino.GameServer.state(pid)
 
     socket =
-      assign(socket, :game, game_info)
+      assign(socket, :game, state)
       |> assign(:game_pid, pid)
-      |> assign(:player_index, player_index(game_info, session))
+      |> assign(:player_index, player_index(state, session))
       |> assign(:player_id, session["session_id"])
       |> assign(:selected, nil)
+      |> assign(:status_message, "...")
+
+    # Update the status message
+    socket = assign(socket, :status_message, get_status_message(state, socket))
 
     Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(game_id))
     {:ok, socket}
@@ -42,7 +46,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
       </div>
 
       <div class="flex flex-col justify-center items-center">
-        <div class="mt-20">Message box</div>
+        <div class="mt-20">
+          <h1 class="text-lg text-gray-200">{@status_message}</h1>
+        </div>
         <div class="mt-20">
           <.trick game={@game} />
         </div>
@@ -61,18 +67,21 @@ defmodule BriscolinoWeb.LiveGame.Board do
   end
 
   @impl true
-  def handle_info({:game, game}, socket) do
-    {:noreply, assign(socket, game: game)}
+  def handle_info({:game, %ServerState{} = state}, socket) do
+    new_message = get_status_message(state, socket)
+
+    socket =
+      socket
+      |> assign(:game, state)
+      |> assign(:status_message, new_message)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_info({:trick_scored, winner}, socket) do
-    who_won = Enum.at(socket.assigns.game.playerinfo, winner).name
-
-    socket =
-      socket
-      |> put_flash(:info, "#{who_won} won the trick.")
-
+    _who_won = Enum.at(socket.assigns.game.playerinfo, winner).name
+    # TODO trigger confetti or something probably client-side
     {:noreply, socket}
   end
 
@@ -119,6 +128,28 @@ defmodule BriscolinoWeb.LiveGame.Board do
     case socket.assigns.player_index do
       nil -> 0
       idx -> length(Enum.at(socket.assigns.game.gamestate.players, idx).hand)
+    end
+  end
+
+  defp get_status_message(%ServerState{gamestate: game, playerinfo: players}, socket) do
+    cond do
+      Briscola.Game.should_score_trick?(game) ->
+        "Scoring..."
+
+      Briscola.Game.game_over?(game) ->
+        "Game over!"
+
+      Briscola.Game.needs_redeal?(game) ->
+        "Redealing..."
+
+      game.action_on == socket.assigns.player_index ->
+        "Your turn!"
+
+      true ->
+        player_name =
+          Enum.at(players, game.action_on).name
+
+        "#{player_name} is thinking..."
     end
   end
 end
