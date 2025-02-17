@@ -35,7 +35,6 @@ defmodule BriscolinoWeb.DebugController do
     {:ok, state} = Briscolino.GameServer.state(pid)
 
     conn
-    |> put_flash(:info, "Game created successfully")
     |> redirect(to: "/game/#{state.id}")
   end
 

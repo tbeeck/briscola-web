@@ -14,9 +14,9 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div>
       <div class="flex justify-center relative">
-        <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[90deg]" />
-        <.card_back class="absolute left-1/2 top-0 -translate-x-1/2 w-32 rotate-[94deg]" />
-        <.card card={@game.gamestate.briscola} class="justify-center items-center z-10" />
+        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[90deg] -z-10" />
+        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[94deg] -z-10" />
+        <.card card={@game.gamestate.briscola} class="justify-center items-center" />
       </div>
       <div class="flex justify-center w-64">
         <.briscola_badge card={@game.gamestate.briscola} />
