@@ -8,12 +8,25 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   @impl true
   def mount(%{"id" => game_id}, session, socket) do
-    pid = Briscolino.GameSupervisor.get_game_pid(game_id)
-    {:ok, state} = Briscolino.GameServer.state(pid)
+    socket =
+      case Briscolino.GameSupervisor.get_game_pid(game_id) do
+        nil ->
+          put_flash(socket, :error, "Game not found")
+          |> redirect(to: ~p"/")
+
+        pid ->
+          setup_socket(pid, session, socket)
+      end
+
+    {:ok, socket}
+  end
+
+  defp setup_socket(game_pid, session, socket) do
+    {:ok, state} = Briscolino.GameServer.state(game_pid)
 
     socket =
       assign(socket, :game, state)
-      |> assign(:game_pid, pid)
+      |> assign(:game_pid, game_pid)
       |> assign(:player_index, player_index(state, session))
       |> assign(:player_id, session["session_id"])
       |> assign(:selected, nil)
@@ -24,8 +37,8 @@ defmodule BriscolinoWeb.LiveGame.Board do
       assign(socket, :status_message, get_status_message(state, socket))
       |> update_timer(state)
 
-    Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(game_id))
-    {:ok, socket}
+    Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(state.id))
+    socket
   end
 
   @impl true

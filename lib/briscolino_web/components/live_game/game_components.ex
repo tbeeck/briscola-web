@@ -32,7 +32,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def briscola_badge(assigns) do
     ~H"""
-    <div class="bg-gray-900 rounded-lg text-white text-md">
+    <div class="bg-gray-900 rounded-lg text-md">
       <div class="flex flex-row items-center flex-wrap p-2">
         <span class="mx-4">Briscola</span>
         <div class="flex flex-row items-center bg-gray-800 rounded-lg py-1 px-4 space-x-2">
@@ -150,7 +150,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list(assigns) do
     ~H"""
-    <ul class="pl-4 text-white">
+    <ul class="pl-4 text-primary_text">
       <%= for {idx, info, _playerstate} <- players(@game) do %>
         <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md"]}>
           <div class="flex flex-row items-center p-2">

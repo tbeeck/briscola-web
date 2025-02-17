@@ -14,7 +14,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        primary_text: "#C3C2C3",
         board: "#17191C",
         card_highlight: "#B9BACC"
       }
