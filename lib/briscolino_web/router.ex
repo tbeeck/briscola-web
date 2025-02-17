@@ -29,6 +29,12 @@ defmodule BriscolinoWeb.Router do
     live "/:id", LiveGame.Board
   end
 
+  scope "/lobby", BriscolinoWeb do
+    pipe_through :browser
+
+    live "/:id", LiveGame.Lobby
+  end
+
   # Admin / msc routes
   pipeline :admin do
     plug :admin_auth
