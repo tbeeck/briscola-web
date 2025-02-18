@@ -22,13 +22,24 @@ defmodule Briscolino.LobbyServer do
 
   def lobby_topic(lobby_id), do: "lobby:#{lobby_id}"
 
-  def start_link(lobby) do
-    GenServer.start_link(__MODULE__, lobby, [])
+  def start_link(%LobbyState{} = lobby) do
+    GenServer.start_link(__MODULE__, lobby,
+      name: {:via, Registry, {Briscolino.LobbyRegistry, lobby_topic(lobby.id)}}
+    )
+  end
+
+  def state(pid) do
+    GenServer.call(pid, :state)
   end
 
   @impl true
   def init(arg) do
     {:ok, arg}
+  end
+
+  @impl true
+  def handle_call(:state, _from, %LobbyState{} = state) do
+    {:reply, state, state}
   end
 
   @impl true

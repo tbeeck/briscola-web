@@ -25,6 +25,15 @@
         </:actions>
       </.simple_form>
     </div>
+    <div>
+      <.simple_form for={%{}} name="New lobby" action="/lobby/new" method="post">
+        <:actions>
+          <.button class="bg-brand hover:bg-brand/80" type="submit">
+            Create new lobby
+          </.button>
+        </:actions>
+      </.simple_form>
+    </div>
   </div>
   <div class="mt-8 flex flex-wrap">
     <%= for {id, pid, state} <- @games do %>

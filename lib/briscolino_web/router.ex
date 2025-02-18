@@ -32,6 +32,7 @@ defmodule BriscolinoWeb.Router do
   scope "/lobby", BriscolinoWeb do
     pipe_through :browser
 
+    post "/new", PageController, :new_lobby
     live "/:id", LiveGame.Lobby
   end
 
