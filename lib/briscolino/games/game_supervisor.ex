@@ -40,7 +40,8 @@ defmodule Briscolino.GameSupervisor do
     state = %ServerState{
       playerinfo: players,
       gamestate: gamestate,
-      id: game_id
+      id: game_id,
+      clock: %GameClock{timer: nil}
     }
 
     make_game(state)
