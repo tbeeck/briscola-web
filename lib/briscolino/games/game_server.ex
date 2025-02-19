@@ -35,7 +35,9 @@ defmodule Briscolino.GameServer do
   def game_topic(game_id), do: "gamestate:#{game_id}"
 
   def start_link(game) do
-    GenServer.start_link(__MODULE__, game, [])
+    GenServer.start_link(__MODULE__, game,
+      name: {:via, Registry, {Briscolino.GameRegistry, game_topic(game.id)}}
+    )
   end
 
   def play(pid, card) do

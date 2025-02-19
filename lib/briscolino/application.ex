@@ -14,6 +14,7 @@ defmodule Briscolino.Application do
       Briscolino.GameSupervisor,
       Briscolino.LobbySupervisor,
       {Registry, keys: :unique, name: Briscolino.LobbyRegistry},
+      {Registry, keys: :unique, name: Briscolino.GameRegistry},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Briscolino.Finch},
       # Start a worker by calling: Briscolino.Worker.start_link(arg)

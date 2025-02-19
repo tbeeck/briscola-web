@@ -73,13 +73,12 @@ defmodule Briscolino.GameSupervisor do
 
   @spec get_game_pid(binary()) :: pid() | nil
   def get_game_pid(game_id) do
-    DynamicSupervisor.which_children(__MODULE__)
-    |> Stream.filter(&match?({_, _pid, :worker, [GameServer]}, &1))
-    |> Stream.map(fn {_, pid, _, _} -> pid end)
-    |> Enum.find(fn pid ->
-      {:ok, state} = GameServer.state(pid)
-      state.id == game_id
-    end)
+    process_name = GameServer.game_topic(game_id)
+
+    case Registry.lookup(Briscolino.GameRegistry, process_name) do
+      [] -> nil
+      [{pid, _}] -> pid
+    end
   end
 
   def init(_) do
