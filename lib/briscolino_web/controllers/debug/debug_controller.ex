@@ -14,11 +14,12 @@ defmodule BriscolinoWeb.DebugController do
         {id, pid, state}
       end)
 
-    lobbies = Briscolino.LobbySupervisor.active_lobbies()
-    |> Enum.map(fn {id, pid} ->
-      {:ok, state} = LobbyServer.state(pid)
-      {id, pid, state}
-    end)
+    lobbies =
+      Briscolino.LobbySupervisor.active_lobbies()
+      |> Enum.map(fn {id, pid} ->
+        {:ok, state} = LobbyServer.state(pid)
+        {id, pid, state}
+      end)
 
     render(conn, :devgame, new_game: %{"players" => 2}, games: games, lobbies: lobbies)
   end

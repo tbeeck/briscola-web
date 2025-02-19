@@ -1,4 +1,5 @@
 defmodule BriscolinoWeb.LiveGame.Lobby do
+  alias Briscolino.LobbyServer.LobbyPlayer
   alias Briscolino.LobbyServer
   alias Briscolino.LobbySupervisor
   use BriscolinoWeb, :live_view
@@ -15,7 +16,23 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
           setup_socket(pid, session, socket)
       end
 
+    lobby_pid = socket.assigns.lobby_pid
+    player_id = socket.assigns.player_id
+    player = %LobbyPlayer{
+      id: player_id,
+      name: "Player",
+      is_ai: false
+    }
+    LobbyServer.join(lobby_pid, player)
     {:ok, socket}
+  end
+
+  @impl true
+  def terminate(_reason, socket) do
+    # Leave the lobby
+    lobby_pid = socket.assigns.lobby_pid
+    player_id = socket.assigns.player_id
+    LobbyServer.leave(lobby_pid, player_id)
   end
 
   def setup_socket(pid, session, socket) do

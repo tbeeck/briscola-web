@@ -32,6 +32,14 @@ defmodule Briscolino.LobbyServer do
     GenServer.call(pid, :state)
   end
 
+  def join(pid, %LobbyPlayer{} = player) do
+    GenServer.call(pid, {:join, player})
+  end
+
+  def leave(pid, player_id) do
+    GenServer.call(pid, {:leave, player_id})
+  end
+
   @impl true
   def init(arg) do
     {:ok, arg}
@@ -44,14 +52,19 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def handle_call({:join, %LobbyPlayer{} = player}, _from, %LobbyState{} = state) do
-    if length(state.players) >= @max_players do
-      {:reply, {:error, :full}, state}
-    else
-      state =
-        %LobbyState{state | players: state.players ++ [player]}
-        |> notify()
+    cond do
+      length(state.players) >= @max_players ->
+        {:reply, {:error, :full}, state}
 
-      {:reply, :ok, state}
+      Enum.any?(state.players, fn p -> p.id == player.id end) ->
+        {:reply, :ok, state}
+
+      true ->
+        state =
+          %LobbyState{state | players: state.players ++ [player]}
+          |> notify()
+
+        {:reply, :ok, state}
     end
   end
 
