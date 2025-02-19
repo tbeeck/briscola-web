@@ -1,6 +1,7 @@
 defmodule BriscolinoWeb.DebugController do
   use BriscolinoWeb, :controller
 
+  alias Briscolino.LobbyServer
   alias Briscolino.GameServer.PlayerInfo
   alias Briscolino.GameSupervisor
   alias Briscolino.GameServer
@@ -13,7 +14,13 @@ defmodule BriscolinoWeb.DebugController do
         {id, pid, state}
       end)
 
-    render(conn, :devgame, new_game: %{"players" => 2}, games: games)
+    lobbies = Briscolino.LobbySupervisor.active_lobbies()
+    |> Enum.map(fn {id, pid} ->
+      {:ok, state} = LobbyServer.state(pid)
+      {id, pid, state}
+    end)
+
+    render(conn, :devgame, new_game: %{"players" => 2}, games: games, lobbies: lobbies)
   end
 
   def create_game(conn, _params) do

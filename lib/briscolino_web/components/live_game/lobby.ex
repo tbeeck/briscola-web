@@ -19,7 +19,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   end
 
   def setup_socket(pid, session, socket) do
-    lobby = LobbyServer.state(pid)
+    {:ok, lobby} = LobbyServer.state(pid)
 
     socket
     |> assign(:lobby_pid, pid)

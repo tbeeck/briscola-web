@@ -39,7 +39,7 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def handle_call(:state, _from, %LobbyState{} = state) do
-    {:reply, state, state}
+    {:reply, {:ok, state}, state}
   end
 
   @impl true

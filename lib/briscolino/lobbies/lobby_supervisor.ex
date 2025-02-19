@@ -40,4 +40,16 @@ defmodule Briscolino.LobbySupervisor do
       [{pid, _}] -> pid
     end
   end
+
+  @spec active_lobbies() :: [{binary(), pid}]
+  def active_lobbies() do
+    DynamicSupervisor.which_children(__MODULE__)
+    |> Stream.filter(&match?({_, _pid, :worker, [LobbyServer]}, &1))
+    |> Stream.map(fn {_, pid, _, _} -> pid end)
+    |> Stream.map(&Task.async(fn -> {&1, LobbyServer.state(&1)} end))
+    |> Enum.map(&Task.await/1)
+    |> Enum.reduce(%{}, fn {pid, {:ok, state}}, acc ->
+      Map.put(acc, state.id, pid)
+    end)
+  end
 end

@@ -46,5 +46,15 @@
         <.link href={~p"/game/#{id}"}>Playerview</.link>
       </div>
     <% end %>
+
+        <%= for {id, pid, state} <- @lobbies do %>
+      <div class="p-4 bg-white rounded shadow m-2 mb-4">
+        <h2 class="text-xl font-semibold leading-7 text-zinc-900">Lobby Info</h2>
+        <h3>{id}</h3>
+        <h3>{inspect(pid)}</h3>
+        <p>{length(state.players)} players</p>
+        <.link href={~p"/lobby/#{id}"}>Playerview</.link>
+      </div>
+    <% end %>
   </div>
 </div>
