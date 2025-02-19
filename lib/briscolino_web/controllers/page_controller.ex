@@ -14,9 +14,8 @@ defmodule BriscolinoWeb.PageController do
   def new_lobby(conn, _parmas) do
     {:ok, pid} = LobbySupervisor.new_lobby()
 
-    lobby =
+    {:ok, lobby} =
       LobbyServer.state(pid)
-      |> IO.inspect()
 
     conn
     |> redirect(to: "/lobby/#{lobby.id}")
