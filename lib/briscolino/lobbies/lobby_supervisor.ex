@@ -1,4 +1,5 @@
 defmodule Briscolino.LobbySupervisor do
+  alias Briscolino.LobbyServer
   alias Briscolino.ShortId
   alias Briscolino.LobbyServer.LobbyState
 
@@ -27,6 +28,16 @@ defmodule Briscolino.LobbySupervisor do
          }) do
       {:error, error} -> {:error, error}
       {:ok, pid} -> {:ok, pid}
+    end
+  end
+
+  @spec get_lobby_pid(binary()) :: pid() | nil
+  def get_lobby_pid(lobby_id) do
+    process_name = LobbyServer.lobby_topic(lobby_id)
+
+    case Registry.lookup(Briscolino.LobbyRegistry, process_name) do
+      [] -> nil
+      [{pid, _}] -> pid
     end
   end
 end
