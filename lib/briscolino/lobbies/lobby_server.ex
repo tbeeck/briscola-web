@@ -66,7 +66,7 @@ defmodule Briscolino.LobbyServer do
     new_players =
       Enum.concat(socket.players, joined_players)
       |> Enum.reject(fn p -> Enum.member?(leaving_players, p.id) end)
-      |> Enum.dedup_by(fn p -> p.id end)
+      |> Enum.uniq_by(fn p -> p.id end)
 
     new_state =
       %LobbyState{socket | players: new_players}
