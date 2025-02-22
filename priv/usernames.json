@@ -1,0 +1,136 @@
+{
+    "nouns": {
+        "male": [
+            "Leone",
+            "Lupo",
+            "Drago",
+            "Guerriero",
+            "Ombra",
+            "Vento",
+            "Cavaliere",
+            "Falco",
+            "Serpente",
+            "Gigante",
+            "Sampo",
+            "Tuono",
+            "Squalo",
+            "Spada",
+            "Viandante"
+        ],
+        "female": [
+            "Volpe",
+            "Aquila",
+            "Stella",
+            "Tempesta",
+            "Montagna",
+            "Torre",
+            "Fenice",
+            "Fiamma",
+            "Neve",
+            "Luna",
+            "Onda"
+        ]
+    },
+    "adjectives": [
+        {
+            "male": "Bello",
+            "female": "Bella"
+        },
+        {
+            "male": "Forte",
+            "female": "Forte"
+        },
+        {
+            "male": "Veloce",
+            "female": "Veloce"
+        },
+        {
+            "male": "Brillante",
+            "female": "Brillante"
+        },
+        {
+            "male": "Oscuro",
+            "female": "Oscura"
+        },
+        {
+            "male": "Luminoso",
+            "female": "Luminosa"
+        },
+        {
+            "male": "Magico",
+            "female": "Magica"
+        },
+        {
+            "male": "Furbo",
+            "female": "Furba"
+        },
+        {
+            "male": "Potente",
+            "female": "Potente"
+        },
+        {
+            "male": "Gigante",
+            "female": "Gigante"
+        },
+        {
+            "male": "Piccolo",
+            "female": "Piccola"
+        },
+        {
+            "male": "Saggio",
+            "female": "Saggia"
+        },
+        {
+            "male": "Antico",
+            "female": "Antica"
+        },
+        {
+            "male": "Giovane",
+            "female": "Giovane"
+        },
+        {
+            "male": "Ribelle",
+            "female": "Ribelle"
+        },
+        {
+            "male": "Strano",
+            "female": "Strana"
+        },
+        {
+            "male": "Freddo",
+            "female": "Fredda"
+        },
+        {
+            "male": "Caldo",
+            "female": "Calda"
+        },
+        {
+            "male": "Nobile",
+            "female": "Nobile"
+        },
+        {
+            "male": "Selvaggio",
+            "female": "Selvaggia"
+        },
+        {
+            "male": "Furioso",
+            "female": "Furiosa"
+        },
+        {
+            "male": "Gentile",
+            "female": "Gentile"
+        },
+        {
+            "male": "Elegante",
+            "female": "Elegante"
+        },
+        {
+            "male": "Spietato",
+            "female": "Spietata"
+        },
+        {
+            "male": "Coraggioso",
+            "female": "Coraggiosa"
+        }
+    ]
+}

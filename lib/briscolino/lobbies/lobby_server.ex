@@ -1,5 +1,6 @@
 defmodule Briscolino.LobbyServer do
   use GenServer
+  alias Phoenix.PubSub
 
   @max_players 4
 
@@ -21,6 +22,7 @@ defmodule Briscolino.LobbyServer do
   end
 
   def lobby_topic(lobby_id), do: "lobby:#{lobby_id}"
+  def lobby_presence_topic(lobby_id), do: "lobby-presence:#{lobby_id}"
 
   def start_link(%LobbyState{} = lobby) do
     GenServer.start_link(__MODULE__, lobby,
@@ -41,8 +43,35 @@ defmodule Briscolino.LobbyServer do
   end
 
   @impl true
-  def init(arg) do
+  def init(%LobbyState{} = arg) do
+    PubSub.subscribe(Briscolino.PubSub, lobby_presence_topic(arg.id))
     {:ok, arg}
+  end
+
+  @impl true
+  def handle_info(
+        %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}},
+        %LobbyState{} = socket
+      ) do
+    joined_players =
+      Enum.map(joins, fn {player_id, %{metas: metas}} ->
+        %LobbyPlayer{
+          id: player_id,
+          name: Map.get(List.first(metas), :name, "Who is this?")
+        }
+      end)
+
+    leaving_players = Map.keys(leaves)
+
+    new_players =
+      Enum.concat(socket.players, joined_players)
+      |> Enum.reject(fn p -> Enum.member?(leaving_players, p.id) end)
+
+    new_state =
+      %LobbyState{socket | players: new_players}
+      |> notify()
+
+    {:noreply, new_state}
   end
 
   @impl true
