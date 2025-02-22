@@ -28,20 +28,12 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       Presence.track(self(), LobbyServer.lobby_presence_topic(lobby_id), player_id, %{
         name: session["username"]
       })
-
-      Process.send_after(self(), :update_lobby, 500)
     end
 
     socket
     |> assign(:lobby, nil)
     |> assign(:lobby_pid, pid)
     |> assign(:player_id, player_id)
-  end
-
-  @impl true
-  def handle_info(:update_lobby, socket) do
-    {:ok, lobby} = LobbyServer.state(socket.assigns.lobby_pid)
-    {:noreply, assign(socket, :lobby, lobby)}
   end
 
   @impl true
