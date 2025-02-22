@@ -7,15 +7,21 @@ defmodule BriscolinoWeb.AdminAuth do
     # environments (assuming no username/pass was configured
     # in the config file for the given environment)
     # When nothing is configured, admin routes are forbidden.
+    creds =
+      case @configured_creds do
+        nil -> []
+        val -> val
+      end
+
     username =
       case System.get_env("ADMIN_USERNAME") do
-        nil -> Keyword.get(@configured_creds, :username)
+        nil -> Keyword.get(creds, :username, nil)
         val -> val
       end
 
     password =
       case System.get_env("ADMIN_PASSWORD") do
-        nil -> Keyword.get(@configured_creds, :password)
+        nil -> Keyword.get(creds, :password, nil)
         val -> val
       end
 
