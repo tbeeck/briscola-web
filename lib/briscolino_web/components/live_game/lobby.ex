@@ -19,6 +19,16 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     {:ok, socket}
   end
 
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="bg-board w-screen h-screen">
+      <p>Player {@player_id}</p>
+      <pre>{inspect(@lobby, pretty: true)}</pre>
+    </div>
+    """
+  end
+
   def setup_socket(pid, lobby_id, session, socket) do
     player_id = session["session_id"]
 
@@ -40,15 +50,5 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   def handle_info({:lobby, lobby}, socket) do
     IO.inspect("Recieved lobby state change")
     {:noreply, assign(socket, :lobby, lobby)}
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div class="bg-board w-screen h-screen">
-      <p>Player {@player_id}</p>
-      <pre>{inspect(@lobby, pretty: true)}</pre>
-    </div>
-    """
   end
 end
