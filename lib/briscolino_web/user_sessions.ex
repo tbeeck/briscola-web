@@ -35,7 +35,6 @@ defmodule BriscolinoWeb.UserSessions do
   defp random_username() do
     gender =
       Enum.random(["male", "female"])
-      |> IO.inspect()
 
     noun =
       Enum.random(@username_config["nouns"][gender])
