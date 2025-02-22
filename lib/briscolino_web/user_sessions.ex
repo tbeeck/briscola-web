@@ -8,8 +8,8 @@ defmodule BriscolinoWeb.UserSessions do
         }
 
   @username_config_file "priv/usernames.json"
-  @external_resource @username_config_file
   @username_config @username_config_file |> File.read!() |> Jason.decode!()
+  @external_resource @username_config_file
 
   @doc """
   Put a unique ID in the user's session.
