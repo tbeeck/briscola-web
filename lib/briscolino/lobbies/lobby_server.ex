@@ -93,6 +93,11 @@ defmodule Briscolino.LobbyServer do
   end
 
   @impl true
+  def handle_info(:stop, %LobbyState{} = state) do
+    {:stop, :normal, state}
+  end
+
+  @impl true
   def handle_info(:timeout, %LobbyState{} = state) do
     {:stop, :normal, state}
   end
@@ -179,6 +184,7 @@ defmodule Briscolino.LobbyServer do
       {:ok, pid} ->
         # Get game ID and notify players that the game started
         notify_game_start(state, pid)
+        Process.send_after(self(), :stop, 2000)
         {:ok, pid}
 
       {:error, _err} ->
