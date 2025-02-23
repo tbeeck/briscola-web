@@ -18,7 +18,11 @@ const GameTimer = {
         100;
       this.el.style.width = percent + "%";
     };
-    setInterval(update, 10);
+    this.interval = setInterval(update, 10);
+  },
+
+  destroyed() {
+    clearInterval(this.interval);
   },
 };
 
