@@ -20,8 +20,9 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[94deg] -z-10" />
         <.card card={@game.gamestate.briscola} class="justify-center items-center" />
       </div>
-      <div class="flex justify-center w-64">
+      <div class="flex flex-col justify-center items-center w-64">
         <.briscola_badge card={@game.gamestate.briscola} />
+        <p class="text-xs">{length(@game.gamestate.deck.cards)}/40 cards remainin</p>
       </div>
     </div>
     """
