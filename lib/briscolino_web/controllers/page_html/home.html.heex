@@ -3,8 +3,16 @@
   <h1 class="text-4xl mt-[20%]">Briscola</h1>
 
   <div class="mt-32 flex flex-row justify-center items-center space-x-4">
-    <.pixel_button icon="hero-play">New Game</.pixel_button>
-    <.pixel_button icon="hero-globe-alt">New Lobby</.pixel_button>
+    <.simple_form for={%{}} name="New Game" action="/game/new" method="post">
+      <:actions>
+        <.pixel_button icon="hero-play">New Game</.pixel_button>
+      </:actions>
+    </.simple_form>
+    <.simple_form for={%{}} name="New Lobby" action="/lobby/new" method="post">
+      <:actions>
+        <.pixel_button icon="hero-globe-alt">New Lobby</.pixel_button>
+      </:actions>
+    </.simple_form>
   </div>
 </div>
 

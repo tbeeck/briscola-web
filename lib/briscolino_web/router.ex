@@ -27,6 +27,7 @@ defmodule BriscolinoWeb.Router do
   scope "/game", BriscolinoWeb do
     pipe_through :browser
 
+    post "/new", PageController, :new_sp_game
     live "/:id", LiveGame.Board
   end
 
