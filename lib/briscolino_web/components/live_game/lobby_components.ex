@@ -19,13 +19,16 @@ defmodule BriscolinoWeb.LiveGame.LobbyComponents do
       <%= for player <- @lobby.players do %>
         <li class="rounded-md" ]}>
           <div class="flex flex-row items-center p-2">
-            <div class="rounded-full w-12 h-12 m-2 mr-4 outline flex items-center justify-center">
+            <div class="rounded-full w-12 h-12 m-2 mr-4 outline
+                        flex items-center justify-center">
               Image
             </div>
             <div class="flex flex-col flex-grow">
-              <div class="text-lg">{player.name}</div>
-              <div class={["flex flex-row items-center"]}>
-                <div class="pl-4 text-md"></div>
+              <div class="text-md">{player.name}</div>
+              <div class="flex flex-row items-center">
+                <span class="pl-4 text-md flex items-center">
+                  [ 0 ]
+                </span>
               </div>
             </div>
           </div>
@@ -39,8 +42,10 @@ defmodule BriscolinoWeb.LiveGame.LobbyComponents do
             </div>
             <div class="flex flex-col flex-grow">
               <div class="text-lg">...</div>
-              <div class={["flex flex-row items-center"]}>
-                <div class="pl-4 text-md"></div>
+              <div class="flex flex-row items-center">
+                <span class="pl-4 text-md flex items-center">
+                  [ 0 ]
+                </span>
               </div>
             </div>
           </div>
