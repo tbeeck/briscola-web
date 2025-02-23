@@ -1,4 +1,5 @@
 defmodule BriscolinoWeb.LiveGame.Lobby do
+  alias Briscola.Game
   alias BriscolinoWeb.UserSessions
   alias Briscolino.LobbyServer.LobbyPlayer
   use BriscolinoWeb, :live_view
@@ -43,29 +44,17 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   def render(assigns) do
     ~H"""
     <div class="bg-board w-screen h-screen">
-      <p>Player {@player_id}</p>
-
-      <button
-        class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
-        phx-click="add-ai"
-      >
+      <p>You are {@player_id}</p>
+      <.pixel_button icon="hero-plus" phx-click="add-ai">
         Add AI
-      </button>
-      <button
-        class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
-        phx-click="remove-ai"
-      >
+      </.pixel_button>
+      <.pixel_button icon="hero-minus" phx-click="remove-ai">
         Remove AI
-      </button>
-      <button
-        class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
-        phx-click="start-game"
-      >
-        Start Game
-      </button>
+      </.pixel_button>
+
+      <.pixel_button icon="hero-play" phx-click="start-game">
+      Start Game
+      </.pixel_button>
       <pre>{inspect(@lobby, pretty: true)}</pre>
     </div>
     """

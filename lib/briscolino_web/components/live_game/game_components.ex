@@ -53,16 +53,23 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   def action_panel(assigns) do
     ~H"""
     <div class="flex justify-center items-center space-x-4 text-lg">
-      <button
-        class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2 disabled:text-gray-300 text-red-400"
+      <.pixel_button
+        icon="hero-x-mark"
+        text_style="text-red-400"
         phx-click="clear-selection"
         disabled={@selected == nil}
       >
-        <span class="text-gray-400">[ <.icon name="hero-x-mark" class="h-4 w-4" /> ]</span>
-        <span>Clear</span>
-      </button>
-      <button
+        Clear
+      </.pixel_button>
+      <.pixel_button
+        icon="hero-arrow-up-on-square"
+        text_style="text-green-400"
+        phx-click="play"
+        disabled={@selected == nil}
+      >
+        Play
+      </.pixel_button>
+      <%!-- <button
         class="w-[175px] h-[42px]
                bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2 disabled:text-gray-300 text-green-400"
         phx-click="play"
@@ -72,7 +79,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
           [ <.icon name="hero-arrow-up-on-square" class="h-4 w-4" /> ]
         </span>
         <span>Play</span>
-      </button>
+      </button> --%>
     </div>
     """
   end

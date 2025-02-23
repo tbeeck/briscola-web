@@ -598,6 +598,26 @@ defmodule BriscolinoWeb.CoreComponents do
   end
 
   @doc """
+  Pixel button with icon in brackets
+  """
+  attr :icon, :string, required: true
+  slot :inner_block, required: true
+  attr :disabled, :boolean, required: false, default: false
+  attr :text_style, :string, required: false, default: "text-gray-300"
+  attr :rest, :global
+
+  def pixel_button(assigns) do
+    ~H"""
+    <button class={["w-[175px] h-[42px] space-x-2 flex items-center justify-center
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover
+               disabled:text-gray-300", @text_style]} {@rest} disabled={@disabled}>
+      <span class="text-gray-400 flex items-center">[<.icon name={@icon} class="h-4 w-4" />]</span>
+      <span>{render_slot(@inner_block)}</span>
+    </button>
+    """
+  end
+
+  @doc """
   Renders a [Heroicon](https://heroicons.com).
 
   Heroicons come in three styles – outline, solid, and mini.
