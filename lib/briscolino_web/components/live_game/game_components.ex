@@ -22,7 +22,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       </div>
       <div class="flex flex-col justify-center items-center w-64">
         <.briscola_badge card={@game.gamestate.briscola} />
-        <p class="text-xs">{length(@game.gamestate.deck.cards)}/40 cards remainin</p>
+        <p class="text-xs">{cards_remaining(@game)}/40 cards remainin</p>
       </div>
     </div>
     """
@@ -213,5 +213,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     |> Enum.map(fn {{info, idx}, game_player} ->
       {idx, info, game_player}
     end)
+  end
+
+  defp cards_remaining(%ServerState{gamestate: game}) do
+    cond do
+      length(game.deck.cards) == 0 ->
+        0
+
+      true ->
+        # Add the briscola if not yet distributed
+        length(game.deck.cards) + 1
+    end
   end
 end
