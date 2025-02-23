@@ -131,6 +131,10 @@
         {
             "male": "Coraggioso",
             "female": "Coraggiosa"
+        },
+        {
+            "male": "Gentile",
+            "female": "Gentile"
         }
     ]
 }
