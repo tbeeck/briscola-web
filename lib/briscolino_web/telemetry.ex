@@ -1,4 +1,6 @@
 defmodule BriscolinoWeb.Telemetry do
+  alias Briscolino.LobbySupervisor
+  alias Briscolino.GameSupervisor
   use Supervisor
   import Telemetry.Metrics
 
@@ -55,7 +57,11 @@ defmodule BriscolinoWeb.Telemetry do
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
-      summary("vm.total_run_queue_lengths.io")
+      summary("vm.total_run_queue_lengths.io"),
+
+      # Game / Lobby Metrics
+      summary("briscolino.games.active.count"),
+      summary("briscolino.lobbies.active.count")
     ]
   end
 
@@ -63,7 +69,20 @@ defmodule BriscolinoWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {BriscolinoWeb, :count_users, []}
+      {BriscolinoWeb.Telemetry, :count_games, []},
+      {BriscolinoWeb.Telemetry, :count_lobbies, []}
     ]
+  end
+
+  def count_games() do
+    all_games = Enum.count(GameSupervisor.active_games())
+    :telemetry.execute([:briscolino, :games, :active], %{count: all_games}, %{})
+    nil
+  end
+
+  def count_lobbies() do
+    all_lobbies = Enum.count(LobbySupervisor.active_lobbies())
+    :telemetry.execute([:briscolino, :lobbies, :active], %{count: all_lobbies}, %{})
+    nil
   end
 end

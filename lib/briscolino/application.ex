@@ -8,7 +8,6 @@ defmodule Briscolino.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      BriscolinoWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:briscolino, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Briscolino.PubSub},
       Briscolino.Presence,
@@ -16,10 +15,7 @@ defmodule Briscolino.Application do
       {Registry, keys: :unique, name: Briscolino.GameRegistry},
       Briscolino.LobbySupervisor,
       {Registry, keys: :unique, name: Briscolino.LobbyRegistry},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Briscolino.Finch},
-      # Start a worker by calling: Briscolino.Worker.start_link(arg)
-      # {Briscolino.Worker, arg},
+      BriscolinoWeb.Telemetry,
       # Start to serve requests, typically the last entry
       BriscolinoWeb.Endpoint
     ]
