@@ -6,6 +6,7 @@ defmodule Briscolino.LobbyServer do
   alias Phoenix.PubSub
 
   @max_players 4
+  @cleanup_timeout Application.compile_env(:briscolino, [:genserver_settings, :cleanup_timeout])
 
   defmodule LobbyPlayer do
     @type t() :: %__MODULE__{
@@ -60,7 +61,7 @@ defmodule Briscolino.LobbyServer do
   @impl true
   def init(%LobbyState{} = arg) do
     PubSub.subscribe(Briscolino.PubSub, lobby_presence_topic(arg.id))
-    {:ok, arg}
+    {:ok, arg, @cleanup_timeout}
   end
 
   @impl true
@@ -88,12 +89,17 @@ defmodule Briscolino.LobbyServer do
       %LobbyState{socket | players: new_players}
       |> notify()
 
-    {:noreply, new_state}
+    {:noreply, new_state} |> with_timeout()
+  end
+
+  @impl true
+  def handle_info(:timeout, %LobbyState{} = state) do
+    {:stop, :normal, state}
   end
 
   @impl true
   def handle_call(:state, _from, %LobbyState{} = state) do
-    {:reply, {:ok, state}, state}
+    {:reply, {:ok, state}, state} |> with_timeout()
   end
 
   @impl true
@@ -101,7 +107,7 @@ defmodule Briscolino.LobbyServer do
     if is_leader(state, initiator_id) do
       handle_call({:join, player}, from, state)
     else
-      {:reply, {:error, :not_leader}, state}
+      {:reply, {:error, :not_leader}, state} |> with_timeout()
     end
   end
 
@@ -121,6 +127,7 @@ defmodule Briscolino.LobbyServer do
 
         {:reply, {:ok, state}, state}
     end
+    |> with_timeout()
   end
 
   @impl true
@@ -132,6 +139,7 @@ defmodule Briscolino.LobbyServer do
       |> notify()
 
     {:reply, {:ok, state}, state}
+    |> with_timeout()
   end
 
   @impl true
@@ -139,9 +147,14 @@ defmodule Briscolino.LobbyServer do
     ai_player = find_ai(state)
 
     cond do
-      ai_player == nil -> {:reply, {:error, :no_ai}, state}
-      !is_leader(state, initiator_id) -> {:reply, {:error, :not_leader}, state}
-      true -> handle_call({:leave, ai_player.id}, from, state)
+      ai_player == nil ->
+        {:reply, {:error, :no_ai}, state} |> with_timeout()
+
+      !is_leader(state, initiator_id) ->
+        {:reply, {:error, :not_leader}, state} |> with_timeout()
+
+      true ->
+        handle_call({:leave, ai_player.id}, from, state)
     end
   end
 
@@ -149,10 +162,10 @@ defmodule Briscolino.LobbyServer do
   def handle_call({:start_game, initiator_id}, _from, %LobbyState{} = state) do
     cond do
       not lobby_full(state) ->
-        {:reply, {:error, :not_enough_players}, state}
+        {:reply, {:error, :not_enough_players}, state} |> with_timeout()
 
       not is_leader(state, initiator_id) ->
-        {:reply, {:error, :not_leader}, state}
+        {:reply, {:error, :not_leader}, state} |> with_timeout()
 
       true ->
         {:reply, make_game(state), state}
@@ -223,4 +236,7 @@ defmodule Briscolino.LobbyServer do
   defp lobby_full(%LobbyState{} = state) do
     length(state.players) == @max_players
   end
+
+  defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
+  defp with_timeout({:noreply, state}), do: {:noreply, state, @cleanup_timeout}
 end

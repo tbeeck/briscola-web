@@ -5,6 +5,7 @@ defmodule Briscolino.GameServer do
   @score_time Application.compile_env(:briscolino, [:game_settings, :score_time])
   @redeal_time Application.compile_env(:briscolino, [:game_settings, :redeal_time])
   @player_turn_time Application.compile_env(:briscolino, [:game_settings, :player_turn_time])
+  @cleanup_timeout Application.compile_env(:briscolino, [:genserver_settings, :cleanup_timeout])
 
   defmodule GameClock do
     @type t() :: %__MODULE__{
@@ -82,12 +83,13 @@ defmodule Briscolino.GameServer do
   @impl true
   def init(state) do
     state = schedule_transition(state)
-    {:ok, state}
+    {:ok, state, @cleanup_timeout}
   end
 
   @impl true
   def handle_call(:state, _from, state) do
     {:reply, {:ok, state}, state}
+    |> with_timeout()
   end
 
   @impl true
@@ -104,6 +106,7 @@ defmodule Briscolino.GameServer do
       {:error, err} ->
         {:reply, {:error, err}, state}
     end
+    |> with_timeout()
   end
 
   @impl true
@@ -113,14 +116,15 @@ defmodule Briscolino.GameServer do
     else
       {:reply, nil, state}
     end
+    |> with_timeout()
   end
 
   @impl true
   def handle_info(:player_timer_expired, %ServerState{gamestate: game} = state) do
     # Play a random card
     random_card_idx = Briscola.Strategy.Random.choose_card(game, game.action_on)
-    {:reply, _, new_state} = handle_call({:play, random_card_idx}, self(), state)
-    {:noreply, new_state}
+    {:reply, _, new_state, timeout} = handle_call({:play, random_card_idx}, self(), state)
+    {:noreply, new_state, timeout}
   end
 
   @impl true
@@ -134,7 +138,7 @@ defmodule Briscolino.GameServer do
       |> schedule_transition()
       |> notify()
 
-    {:noreply, new_state}
+    {:noreply, new_state} |> with_timeout()
   end
 
   @impl true
@@ -153,6 +157,7 @@ defmodule Briscolino.GameServer do
 
         {:noreply, new_state}
     end
+    |> with_timeout()
   end
 
   @impl true
@@ -169,6 +174,12 @@ defmodule Briscolino.GameServer do
 
         {:noreply, new_state}
     end
+    |> with_timeout()
+  end
+
+  @impl true
+  def handle_info(:timeout, %ServerState{} = state) do
+    {:stop, :normal, state}
   end
 
   defp schedule_transition(%ServerState{gamestate: game, clock: clock} = state) do
@@ -218,4 +229,7 @@ defmodule Briscolino.GameServer do
 
     state
   end
+
+  defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
+  defp with_timeout({:noreply, state}), do: {:noreply, state, @cleanup_timeout}
 end

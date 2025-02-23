@@ -17,6 +17,11 @@ config :briscolino,
   ]
 
 config :briscolino,
+  genserver_settings: [
+    cleanup_timeout: 10 * 60 * 1000
+  ]
+
+config :briscolino,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
