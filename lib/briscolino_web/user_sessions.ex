@@ -20,7 +20,7 @@ defmodule BriscolinoWeb.UserSessions do
     if get_session(conn, :session_id) do
       conn
     else
-      put_session(conn, :session_id, ShortId.new() <> ShortId.new())
+      put_session(conn, :session_id, random_player_id())
     end
   end
 
@@ -30,6 +30,10 @@ defmodule BriscolinoWeb.UserSessions do
     else
       put_session(conn, :username, random_username())
     end
+  end
+
+  def random_player_id() do
+    ShortId.new() <> ShortId.new()
   end
 
   defp random_username() do

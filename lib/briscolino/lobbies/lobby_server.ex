@@ -38,6 +38,10 @@ defmodule Briscolino.LobbyServer do
     GenServer.call(pid, {:join, player})
   end
 
+  def add_player(pid, %LobbyPlayer{} = player, initiator_id) do
+    GenServer.call(pid, {:join, player, initiator_id})
+  end
+
   def leave(pid, player_id) do
     GenServer.call(pid, {:leave, player_id})
   end
@@ -67,6 +71,7 @@ defmodule Briscolino.LobbyServer do
       Enum.concat(socket.players, joined_players)
       |> Enum.reject(fn p -> Enum.member?(leaving_players, p.id) end)
       |> Enum.uniq_by(fn p -> p.id end)
+      |> Enum.slice(0..3)
 
     new_state =
       %LobbyState{socket | players: new_players}
@@ -81,20 +86,31 @@ defmodule Briscolino.LobbyServer do
   end
 
   @impl true
+  def handle_call({:join, %LobbyPlayer{} = player, initiator_id}, from, %LobbyState{} = state) do
+    leader = find_leader(state)
+    leader_id = leader.id
+
+    case initiator_id do
+      ^leader_id -> handle_call({:join, player}, from, state)
+      _ -> {:reply, {:error, :not_leader}, state}
+    end
+  end
+
+  @impl true
   def handle_call({:join, %LobbyPlayer{} = player}, _from, %LobbyState{} = state) do
     cond do
       length(state.players) >= @max_players ->
         {:reply, {:error, :full}, state}
 
       Enum.any?(state.players, fn p -> p.id == player.id end) ->
-        {:reply, :ok, state}
+        {:reply, {:ok, state}, state}
 
       true ->
         state =
           %LobbyState{state | players: state.players ++ [player]}
           |> notify()
 
-        {:reply, :ok, state}
+        {:reply, {:ok, state}, state}
     end
   end
 
@@ -112,5 +128,10 @@ defmodule Briscolino.LobbyServer do
   defp notify(state) do
     Phoenix.PubSub.broadcast(Briscolino.PubSub, lobby_topic(state.id), {:lobby, state})
     state
+  end
+
+  defp find_leader(%LobbyState{} = state) do
+    # Find first non-ai player ID
+    Enum.find(state.players, fn p -> p.is_ai != true end)
   end
 end

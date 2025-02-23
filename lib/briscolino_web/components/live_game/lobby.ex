@@ -1,8 +1,11 @@
 defmodule BriscolinoWeb.LiveGame.Lobby do
+  alias BriscolinoWeb.UserSessions
+  alias Briscolino.LobbyServer.LobbyPlayer
+  use BriscolinoWeb, :live_view
+
   alias Briscolino.LobbyServer
   alias Briscolino.LobbySupervisor
   alias Briscolino.Presence
-  use BriscolinoWeb, :live_view
 
   @impl true
   def mount(%{"id" => lobby_id}, session, socket) do
@@ -17,16 +20,6 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       end
 
     {:ok, socket}
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div class="bg-board w-screen h-screen">
-      <p>Player {@player_id}</p>
-      <pre>{inspect(@lobby, pretty: true)}</pre>
-    </div>
-    """
   end
 
   def setup_socket(pid, lobby_id, session, socket) do
@@ -47,8 +40,56 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   end
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="bg-board w-screen h-screen">
+      <p>Player {@player_id}</p>
+
+      <button
+        class="w-[175px] h-[42px]
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
+        phx-click="add-ai"
+      >
+        Add AI
+      </button>
+      <button
+        class="w-[175px] h-[42px]
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
+        phx-click="remove-ai"
+      >
+        Remove AI
+      </button>
+      <pre>{inspect(@lobby, pretty: true)}</pre>
+    </div>
+    """
+  end
+
+  @impl true
+  def handle_event("add-ai", _params, socket) do
+    ai_player =
+      %LobbyPlayer{
+        id: UserSessions.random_player_id(),
+        name: "AI Player",
+        is_ai: true
+      }
+      |> IO.inspect(label: "new ai players")
+
+    socket =
+      case LobbyServer.add_player(socket.assigns.lobby_pid, ai_player, socket.assigns.player_id) do
+        {:ok, lobby} -> assign(socket, lobby: lobby)
+        {:error, err} -> put_flash(socket, :error, "Error: #{err}")
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("remove-ai", _params, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:lobby, lobby}, socket) do
-    IO.inspect("Recieved lobby state change")
     {:noreply, assign(socket, :lobby, lobby)}
   end
 end
