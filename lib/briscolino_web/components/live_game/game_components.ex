@@ -1,6 +1,6 @@
 defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Phoenix.Component
-
+  import BriscolinoWeb.CoreComponents
   alias Briscola.Card
   alias Briscolino.GameServer.ServerState
   use Gettext, backend: BriscolinoWeb.Gettext
@@ -59,7 +59,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         phx-click="clear-selection"
         disabled={@selected == nil}
       >
-        <span class="text-gray-400">[ X ]</span>
+        <span class="text-gray-400">[ <.icon name="hero-x-mark" class="h-4 w-4" /> ]</span>
         <span>Clear</span>
       </button>
       <button
@@ -68,7 +68,9 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         phx-click="play"
         disabled={@selected == nil}
       >
-        <span class="text-gray-400">[ ↦ ]</span>
+        <span class="text-gray-400">
+          [ <.icon name="hero-arrow-up-on-square" class="h-4 w-4" /> ]
+        </span>
         <span>Play</span>
       </button>
     </div>
