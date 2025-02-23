@@ -53,7 +53,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       </.pixel_button>
 
       <.pixel_button icon="hero-play" phx-click="start-game">
-      Start Game
+        Start Game
       </.pixel_button>
       <pre>{inspect(@lobby, pretty: true)}</pre>
     </div>
