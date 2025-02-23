@@ -59,6 +59,13 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       >
         Remove AI
       </button>
+      <button
+        class="w-[175px] h-[42px]
+               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2"
+        phx-click="start-game"
+      >
+        Start Game
+      </button>
       <pre>{inspect(@lobby, pretty: true)}</pre>
     </div>
     """
@@ -95,7 +102,28 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   end
 
   @impl true
+  def handle_event("start-game", _params, socket) do
+    socket =
+      case LobbyServer.start_game(socket.assigns.lobby_pid, socket.assigns.player_id) do
+        {:ok, _pid} ->
+          # Wait for "game_start" event to hit, then redirect
+          socket
+
+        {:error, err} ->
+          put_flash(socket, :error, "Error: #{err}")
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:lobby, lobby}, socket) do
     {:noreply, assign(socket, :lobby, lobby)}
+  end
+
+  @impl true
+  def handle_info({:game_start, game_id}, socket) do
+    IO.inspect(game_id, label: "Game start id")
+    {:noreply, redirect(socket, to: ~p"/game/#{game_id}")}
   end
 end

@@ -1,6 +1,8 @@
 defmodule Briscolino.LobbyServer do
   use GenServer
 
+  alias Briscolino.GameServer
+  alias Briscolino.GameSupervisor
   alias Phoenix.PubSub
 
   @max_players 4
@@ -49,6 +51,10 @@ defmodule Briscolino.LobbyServer do
 
   def remove_ai(pid, player_id) do
     GenServer.call(pid, {:remove_ai, player_id})
+  end
+
+  def start_game(pid, player_id) do
+    GenServer.call(pid, {:start_game, player_id})
   end
 
   @impl true
@@ -102,7 +108,7 @@ defmodule Briscolino.LobbyServer do
   @impl true
   def handle_call({:join, %LobbyPlayer{} = player}, _from, %LobbyState{} = state) do
     cond do
-      length(state.players) >= @max_players ->
+      lobby_full(state) ->
         {:reply, {:error, :full}, state}
 
       Enum.any?(state.players, fn p -> p.id == player.id end) ->
@@ -139,9 +145,63 @@ defmodule Briscolino.LobbyServer do
     end
   end
 
+  @impl true
+  def handle_call({:start_game, initiator_id}, _from, %LobbyState{} = state) do
+    cond do
+      not lobby_full(state) ->
+        {:reply, {:error, :not_enough_players}, state}
+
+      not is_leader(state, initiator_id) ->
+        {:reply, {:error, :not_leader}, state}
+
+      true ->
+        {:reply, make_game(state), state}
+    end
+  end
+
+  defp make_game(%LobbyState{} = state) do
+    players = to_game_players(state)
+
+    case GameSupervisor.new_game(players) do
+      {:ok, pid} ->
+        # Get game ID and notify players that the game started
+        notify_game_start(state, pid)
+        {:ok, pid}
+
+      {:error, _err} ->
+        {:error, :create_game_failed}
+    end
+  end
+
+  defp to_game_players(%LobbyState{} = lobby) do
+    Enum.map(lobby.players, fn p ->
+      %GameServer.PlayerInfo{
+        name: p.name,
+        play_token: p.id,
+        ai_strategy:
+          case p.is_ai do
+            true -> Briscola.Strategy.Random
+            _ -> nil
+          end
+      }
+    end)
+  end
+
   defp notify(state) do
     Phoenix.PubSub.broadcast(Briscolino.PubSub, lobby_topic(state.id), {:lobby, state})
     state
+  end
+
+  defp notify_game_start(lobby_state, game_pid) do
+    {:ok, game_state} = GameServer.state(game_pid)
+
+    Phoenix.PubSub.broadcast(
+      Briscolino.PubSub,
+      lobby_topic(lobby_state.id),
+      {:game_start, game_state.id}
+    )
+
+    lobby_state
   end
 
   defp is_leader(state, player_id) do
@@ -158,5 +218,9 @@ defmodule Briscolino.LobbyServer do
 
   defp find_ai(%LobbyState{} = state) do
     Enum.find(state.players, fn p -> p.is_ai end)
+  end
+
+  defp lobby_full(%LobbyState{} = state) do
+    length(state.players) == @max_players
   end
 end
