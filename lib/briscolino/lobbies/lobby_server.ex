@@ -1,5 +1,6 @@
 defmodule Briscolino.LobbyServer do
   use GenServer
+
   alias Phoenix.PubSub
 
   @max_players 4
@@ -46,6 +47,10 @@ defmodule Briscolino.LobbyServer do
     GenServer.call(pid, {:leave, player_id})
   end
 
+  def remove_ai(pid, player_id) do
+    GenServer.call(pid, {:remove_ai, player_id})
+  end
+
   @impl true
   def init(%LobbyState{} = arg) do
     PubSub.subscribe(Briscolino.PubSub, lobby_presence_topic(arg.id))
@@ -87,12 +92,10 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def handle_call({:join, %LobbyPlayer{} = player, initiator_id}, from, %LobbyState{} = state) do
-    leader = find_leader(state)
-    leader_id = leader.id
-
-    case initiator_id do
-      ^leader_id -> handle_call({:join, player}, from, state)
-      _ -> {:reply, {:error, :not_leader}, state}
+    if is_leader(state, initiator_id) do
+      handle_call({:join, player}, from, state)
+    else
+      {:reply, {:error, :not_leader}, state}
     end
   end
 
@@ -116,13 +119,24 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def handle_call({:leave, player_id}, _from, %LobbyState{players: players} = state) do
-    players = Enum.reject(players, fn p -> p.id == player_id end)
+    new_players = Enum.reject(players, fn p -> p.id == player_id end)
 
     state =
-      %LobbyState{state | players: players}
+      %LobbyState{state | players: new_players}
       |> notify()
 
-    {:reply, :ok, state}
+    {:reply, {:ok, state}, state}
+  end
+
+  @impl true
+  def handle_call({:remove_ai, initiator_id}, from, %LobbyState{} = state) do
+    ai_player = find_ai(state)
+
+    cond do
+      ai_player == nil -> {:reply, {:error, :no_ai}, state}
+      !is_leader(state, initiator_id) -> {:reply, {:error, :not_leader}, state}
+      true -> handle_call({:leave, ai_player.id}, from, state)
+    end
   end
 
   defp notify(state) do
@@ -130,8 +144,19 @@ defmodule Briscolino.LobbyServer do
     state
   end
 
+  defp is_leader(state, player_id) do
+    case find_leader(state) do
+      nil -> false
+      leader -> leader.id == player_id
+    end
+  end
+
   defp find_leader(%LobbyState{} = state) do
     # Find first non-ai player ID
     Enum.find(state.players, fn p -> p.is_ai != true end)
+  end
+
+  defp find_ai(%LobbyState{} = state) do
+    Enum.find(state.players, fn p -> p.is_ai end)
   end
 end

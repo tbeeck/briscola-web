@@ -69,14 +69,14 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     ai_player =
       %LobbyPlayer{
         id: UserSessions.random_player_id(),
-        name: "AI Player",
+        name: UserSessions.random_username() <> " (AI)",
         is_ai: true
       }
       |> IO.inspect(label: "new ai players")
 
     socket =
       case LobbyServer.add_player(socket.assigns.lobby_pid, ai_player, socket.assigns.player_id) do
-        {:ok, lobby} -> assign(socket, lobby: lobby)
+        {:ok, _} -> socket
         {:error, err} -> put_flash(socket, :error, "Error: #{err}")
       end
 
@@ -85,6 +85,12 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
 
   @impl true
   def handle_event("remove-ai", _params, socket) do
+    socket =
+      case LobbyServer.remove_ai(socket.assigns.lobby_pid, socket.assigns.player_id) do
+        {:ok, _} -> socket
+        {:error, err} -> put_flash(socket, :error, "Error: #{err}")
+      end
+
     {:noreply, socket}
   end
 

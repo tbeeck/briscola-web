@@ -36,7 +36,7 @@ defmodule BriscolinoWeb.UserSessions do
     ShortId.new() <> ShortId.new()
   end
 
-  defp random_username() do
+  def random_username() do
     gender =
       Enum.random(["male", "female"])
 
