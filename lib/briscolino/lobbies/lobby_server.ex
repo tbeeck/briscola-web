@@ -217,26 +217,28 @@ defmodule Briscolino.LobbyServer do
     lobby_state
   end
 
-  defp is_leader(state, player_id) do
+  defp find_ai(%LobbyState{} = state) do
+    Enum.find(state.players, fn p -> p.is_ai end)
+  end
+
+  # Helpers that other modules can make use of
+  def is_leader(state, player_id) do
     case find_leader(state) do
       nil -> false
       leader -> leader.id == player_id
     end
   end
 
-  defp find_leader(%LobbyState{} = state) do
+  def find_leader(%LobbyState{} = state) do
     # Find first non-ai player ID
     Enum.find(state.players, fn p -> p.is_ai != true end)
   end
 
-  defp find_ai(%LobbyState{} = state) do
-    Enum.find(state.players, fn p -> p.is_ai end)
-  end
-
-  defp lobby_full(%LobbyState{} = state) do
+  def lobby_full(%LobbyState{} = state) do
     length(state.players) == @max_players
   end
 
+  # For setting timeouts after each message -- the beam will clean up these genservers
   defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
   defp with_timeout({:noreply, state}), do: {:noreply, state, @cleanup_timeout}
 end

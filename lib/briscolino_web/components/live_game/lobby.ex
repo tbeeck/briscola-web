@@ -1,9 +1,10 @@
 defmodule BriscolinoWeb.LiveGame.Lobby do
-  alias Briscola.Game
-  alias BriscolinoWeb.UserSessions
-  alias Briscolino.LobbyServer.LobbyPlayer
   use BriscolinoWeb, :live_view
 
+  import BriscolinoWeb.LiveGame.LobbyComponents
+
+  alias BriscolinoWeb.UserSessions
+  alias Briscolino.LobbyServer.LobbyPlayer
   alias Briscolino.LobbyServer
   alias Briscolino.LobbySupervisor
   alias Briscolino.Presence
@@ -34,8 +35,13 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       })
     end
 
+    {:ok, lobby} =
+      LobbySupervisor.get_lobby_pid(lobby_id)
+      |> LobbyServer.state()
+
     socket
-    |> assign(:lobby, nil)
+    |> assign(:lobby, lobby)
+    |> assign(:leader, LobbyServer.find_leader(lobby))
     |> assign(:lobby_pid, pid)
     |> assign(:player_id, player_id)
   end
@@ -44,18 +50,28 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   def render(assigns) do
     ~H"""
     <div class="bg-board w-screen h-screen">
-      <p>You are {@player_id}</p>
-      <.pixel_button icon="hero-plus" phx-click="add-ai">
-        Add AI
-      </.pixel_button>
-      <.pixel_button icon="hero-minus" phx-click="remove-ai">
-        Remove AI
-      </.pixel_button>
-
-      <.pixel_button icon="hero-play" phx-click="start-game">
-        Start Game
-      </.pixel_button>
-      <pre>{inspect(@lobby, pretty: true)}</pre>
+      <div class="fixed w-64 x-0 y-0 h-full
+                  flex flex-col my-auto justify-center">
+        <.lobby_player_list lobby={@lobby} />
+      </div>
+      <div class="flex flex-col justify-center items-center">
+        <div class="mt-[10%]">
+          <%= if @leader do %>
+            <h1 class="text-2xl">{@leader.name}'s Lobby</h1>
+          <% end %>
+        </div>
+        <div class="mt-[10%] space-y-4">
+          <.pixel_button icon="hero-plus" phx-click="add-ai">
+            Add AI
+          </.pixel_button>
+          <.pixel_button icon="hero-minus" phx-click="remove-ai">
+            Remove AI
+          </.pixel_button>
+          <.pixel_button icon="hero-play" phx-click="start-game">
+            Start Game
+          </.pixel_button>
+        </div>
+      </div>
     </div>
     """
   end
@@ -68,7 +84,6 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
         name: UserSessions.random_username() <> " (AI)",
         is_ai: true
       }
-      |> IO.inspect(label: "new ai players")
 
     socket =
       case LobbyServer.add_player(socket.assigns.lobby_pid, ai_player, socket.assigns.player_id) do
@@ -107,12 +122,21 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
 
   @impl true
   def handle_info({:lobby, lobby}, socket) do
-    {:noreply, assign(socket, :lobby, lobby)}
+    socket =
+      socket
+      |> assign(:lobby, lobby)
+      |> assign(:leader, LobbyServer.find_leader(lobby))
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_info({:game_start, game_id}, socket) do
     IO.inspect(game_id, label: "Game start id")
     {:noreply, redirect(socket, to: ~p"/game/#{game_id}")}
+  end
+
+  defp is_leader(socket) do
+    socket.assigns.leader.id == socket.assigns.player_id
   end
 end

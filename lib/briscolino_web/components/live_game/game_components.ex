@@ -1,9 +1,11 @@
 defmodule BriscolinoWeb.LiveGame.GameComponents do
   use Phoenix.Component
+  use Gettext, backend: BriscolinoWeb.Gettext
+
   import BriscolinoWeb.CoreComponents
+
   alias Briscola.Card
   alias Briscolino.GameServer.ServerState
-  use Gettext, backend: BriscolinoWeb.Gettext
 
   @doc """
   Card pile with briscola underneath
@@ -69,17 +71,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       >
         Play
       </.pixel_button>
-      <%!-- <button
-        class="w-[175px] h-[42px]
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover space-x-2 disabled:text-gray-300 text-green-400"
-        phx-click="play"
-        disabled={@selected == nil}
-      >
-        <span class="text-gray-400">
-          [ <.icon name="hero-arrow-up-on-square" class="h-4 w-4" /> ]
-        </span>
-        <span>Play</span>
-      </button> --%>
     </div>
     """
   end
@@ -159,14 +150,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list(assigns) do
     ~H"""
-    <ul class="pl-4 text-primary_text">
+    <ul class="pl-4 text-primary_text space-y-4">
       <%= for {idx, info, _playerstate} <- players(@game) do %>
-        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md"]}>
+        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
           <div class="flex flex-row items-center p-2">
-            <img src="/images/card_back.png" class="rounded-full w-12 h-12 m-2 mr-4" />
+            <div class="rounded-full w-12 h-12 mr-4 outline flex items-center justify-center">
+              Image
+            </div>
             <div class="flex flex-col flex-grow">
-              <div class="text-lg">{info.name}</div>
-              <div class={["flex flex-row items-center"]}>
+              <div class="text-md">{info.name}</div>
+              <div class="flex flex-row items-center w-full">
                 {player_status(@game, idx)}
                 <div class="pl-4 text-md">
                   [ {player_score(@game, idx)} ]
