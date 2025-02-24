@@ -246,5 +246,13 @@ defmodule Briscolino.LobbyServer do
 
   # For setting timeouts after each message -- the beam will clean up these genservers
   defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
-  defp with_timeout({:noreply, state}), do: {:noreply, state, @cleanup_timeout}
+
+  defp with_timeout({:noreply, state}) do
+    if find_leader(state) == nil do
+      # No players -- give a grace period in case they are refreshing / still connecting
+      {:noreply, state, 5_000}
+    else
+      {:noreply, state, @cleanup_timeout}
+    end
+  end
 end
