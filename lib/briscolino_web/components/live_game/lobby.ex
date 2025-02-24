@@ -145,7 +145,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     {:noreply, redirect(socket, to: ~p"/game/#{game_id}")}
   end
 
-  defp update_page_title(socket, %LobbyState{players: players} = state) do
+  defp update_page_title(socket, %LobbyState{players: players}) do
     assign(socket, :page_title, "#{length(players)}/4 players")
   end
 end
