@@ -1,11 +1,17 @@
 defmodule Briscolino.GameServer do
   use GenServer
 
+  alias Briscolino.Presence
+
   @bot_think_time Application.compile_env(:briscolino, [:game_settings, :bot_think_time])
   @score_time Application.compile_env(:briscolino, [:game_settings, :score_time])
   @redeal_time Application.compile_env(:briscolino, [:game_settings, :redeal_time])
   @player_turn_time Application.compile_env(:briscolino, [:game_settings, :player_turn_time])
   @cleanup_timeout Application.compile_env(:briscolino, [:genserver_settings, :cleanup_timeout])
+  @fast_cleanup_timeout Application.compile_env(:briscolino, [
+                          :genserver_settings,
+                          :fast_cleanup_timeout
+                        ])
 
   defmodule GameClock do
     @type t() :: %__MODULE__{
@@ -34,6 +40,7 @@ defmodule Briscolino.GameServer do
   end
 
   def game_topic(game_id), do: "gamestate:#{game_id}"
+  def game_presence_topic(game_id), do: "game-presence:#{game_id}"
 
   def start_link(game) do
     GenServer.start_link(__MODULE__, game,
@@ -230,6 +237,28 @@ defmodule Briscolino.GameServer do
     state
   end
 
-  defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
-  defp with_timeout({:noreply, state}), do: {:noreply, state, @cleanup_timeout}
+  defp players_connected?(%ServerState{} = state) do
+    topic = game_presence_topic(state.id)
+    Enum.count(Presence.list(topic)) > 0
+  end
+
+  defp with_timeout({:reply, reply, state}) do
+    cond do
+      !players_connected?(state) ->
+        {:reply, reply, state, @fast_cleanup_timeout}
+
+      true ->
+        {:reply, reply, state, @cleanup_timeout}
+    end
+  end
+
+  defp with_timeout({:noreply, state}) do
+    cond do
+      !players_connected?(state) ->
+        {:noreply, state, @fast_cleanup_timeout}
+
+      true ->
+        {:noreply, state, @cleanup_timeout}
+    end
+  end
 end

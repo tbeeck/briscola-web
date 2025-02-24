@@ -75,13 +75,13 @@ defmodule BriscolinoWeb.Telemetry do
   end
 
   def count_games() do
-    all_games = Enum.count(GameSupervisor.active_games())
+    all_games = Enum.count(GameSupervisor.active_game_pids())
     :telemetry.execute([:briscolino, :games, :active], %{count: all_games}, %{})
     nil
   end
 
   def count_lobbies() do
-    all_lobbies = Enum.count(LobbySupervisor.active_lobbies())
+    all_lobbies = Enum.count(LobbySupervisor.active_lobby_pids())
     :telemetry.execute([:briscolino, :lobbies, :active], %{count: all_lobbies}, %{})
     nil
   end

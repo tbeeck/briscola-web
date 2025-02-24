@@ -71,6 +71,14 @@ defmodule Briscolino.GameSupervisor do
     end)
   end
 
+  @spec active_games() :: [pid()]
+  def active_game_pids() do
+    DynamicSupervisor.which_children(__MODULE__)
+    |> Stream.filter(&match?({_, _pid, :worker, [GameServer]}, &1))
+    |> Stream.map(fn {_, pid, _, _} -> pid end)
+    |> Enum.to_list()
+  end
+
   @spec get_game_pid(binary()) :: pid() | nil
   def get_game_pid(game_id) do
     process_name = GameServer.game_topic(game_id)

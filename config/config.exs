@@ -18,7 +18,8 @@ config :briscolino,
 
 config :briscolino,
   genserver_settings: [
-    cleanup_timeout: 10 * 60 * 1000
+    cleanup_timeout: 10 * 60 * 1000,
+    fast_cleanup_timeout: 30 * 1000
   ]
 
 config :briscolino,

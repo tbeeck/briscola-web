@@ -7,6 +7,10 @@ defmodule Briscolino.LobbyServer do
 
   @max_players 4
   @cleanup_timeout Application.compile_env(:briscolino, [:genserver_settings, :cleanup_timeout])
+  @fast_cleanup_timeout Application.compile_env(:briscolino, [
+                          :genserver_settings,
+                          :fast_cleanup_timeout
+                        ])
 
   defmodule LobbyPlayer do
     @type t() :: %__MODULE__{
@@ -244,15 +248,17 @@ defmodule Briscolino.LobbyServer do
     length(state.players) == @max_players
   end
 
-  # For setting timeouts after each message -- the beam will clean up these genservers
   defp with_timeout({:reply, reply, state}), do: {:reply, reply, state, @cleanup_timeout}
 
   defp with_timeout({:noreply, state}) do
-    if find_leader(state) == nil do
-      # No players -- give a grace period in case they are refreshing / still connecting
-      {:noreply, state, 5_000}
-    else
-      {:noreply, state, @cleanup_timeout}
+    cond do
+      find_leader(state) == nil ->
+        IO.inspect("Fast cleanpu for lobby #{state.id}")
+        {:noreply, state, @fast_cleanup_timeout}
+
+      true ->
+        IO.inspect("Slow cleanpu for lobby #{state.id}")
+        {:noreply, state, @cleanup_timeout}
     end
   end
 end

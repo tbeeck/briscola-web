@@ -5,6 +5,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   alias Briscolino.GameServer
   alias Briscolino.GameServer.ServerState
+  alias Briscolino.Presence
 
   @impl true
   def mount(%{"id" => game_id}, session, socket) do
@@ -23,6 +24,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   defp setup_socket(game_pid, session, socket) do
     {:ok, state} = Briscolino.GameServer.state(game_pid)
+    player_id = session["session_id"]
 
     socket =
       assign(socket, :game, state)
@@ -38,6 +40,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> update_timer(state)
 
     if connected?(socket) do
+      Presence.track(self(), GameServer.game_presence_topic(state.id), player_id, %{})
       Phoenix.PubSub.subscribe(Briscolino.PubSub, GameServer.game_topic(state.id))
     end
 
