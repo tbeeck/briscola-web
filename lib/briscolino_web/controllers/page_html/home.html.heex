@@ -2,7 +2,7 @@
 <div class="flex flex-col justify-center items-center h-full">
   <h1 class="text-4xl mt-[20%]">Briscola</h1>
 
-  <div class="mt-32 flex flex-row justify-center items-center space-x-4">
+  <div class="mt-20 flex flex-row justify-center items-center space-x-4">
     <.simple_form for={%{}} name="New Game" action="/game/new" method="post">
       <:actions>
         <.pixel_button icon="hero-play">New Game</.pixel_button>
@@ -14,10 +14,7 @@
       </:actions>
     </.simple_form>
   </div>
-</div>
-
-<div class="fixed bottom-0 left-1/2 -translate-x-1/2">
-  <div class="text-lg">
+  <div class="mt-5 text-lg">
     <a href={~p"/about"}>
       <span class="underline">About</span>
     </a>
