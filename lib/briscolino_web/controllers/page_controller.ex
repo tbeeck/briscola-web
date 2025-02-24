@@ -25,16 +25,18 @@ defmodule BriscolinoWeb.PageController do
   end
 
   def new_sp_game(conn, _params) do
-    bot = %GameServer.PlayerInfo{
-      ai_strategy: Briscola.Strategy.Random,
-      name: UserSessions.random_username() <> " (AI)"
-    }
+    bots =
+      Enum.map(0..2, fn _ ->
+        %GameServer.PlayerInfo{
+          ai_strategy: Briscola.Strategy.Random,
+          name: UserSessions.random_username() <> " (AI)"
+        }
+      end)
 
     play_token = get_session(conn)["session_id"]
 
     players =
-      [%GameServer.PlayerInfo{play_token: play_token, name: "You"}] ++
-        List.duplicate(bot, 3)
+      [%GameServer.PlayerInfo{play_token: play_token, name: "You"}] ++ bots
 
     {:ok, pid} = GameSupervisor.new_game(players)
     {:ok, game} = GameServer.state(pid)
