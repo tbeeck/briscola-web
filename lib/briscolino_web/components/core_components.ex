@@ -608,11 +608,18 @@ defmodule BriscolinoWeb.CoreComponents do
 
   def pixel_button(assigns) do
     ~H"""
-    <button class={["w-[175px] h-[42px] space-x-2 flex items-center justify-center
-               bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover
-               disabled:text-gray-300", @text_style]} {@rest} disabled={@disabled}>
+    <button
+      class={[
+        "w-[175px] h-[42px] space-x-2 flex items-center justify-center",
+        "bg-[url(/images/pixel_button.png)] bg-no-repeat bg-cover",
+        "disabled:text-gray-600 active:opacity-65 hover:opacity-80 btn-text-shadow",
+        @text_style
+      ]}
+      {@rest}
+      disabled={@disabled}
+    >
       <span class="text-gray-400 flex items-center">[<.icon name={@icon} class="h-4 w-4" />]</span>
-      <span>{render_slot(@inner_block)}</span>
+      <span class="font-black tracking-[2px]">{render_slot(@inner_block)}</span>
     </button>
     """
   end

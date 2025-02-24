@@ -58,7 +58,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     <div class="flex justify-center items-center space-x-4 text-lg">
       <.pixel_button
         icon="hero-x-mark"
-        text_style="text-red-400"
+        text_style="text-red-400 hover:text-red-200"
         phx-click="clear-selection"
         disabled={@selected == nil}
       >
@@ -66,7 +66,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       </.pixel_button>
       <.pixel_button
         icon="hero-arrow-up-on-square"
-        text_style="text-green-400"
+        text_style="text-green-400 hover:text-green-200"
         phx-click="play"
         disabled={@selected == nil}
       >

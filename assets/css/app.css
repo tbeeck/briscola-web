@@ -13,3 +13,7 @@
 body {
     font-family: 'Inconsolata', sans-serif;
 }
+
+@utility btn-text-shadow {
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.40);
+}
