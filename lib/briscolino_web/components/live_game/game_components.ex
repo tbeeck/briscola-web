@@ -16,8 +16,8 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div>
       <div class="flex justify-center relative">
-        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[90deg] -z-10" />
-        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[94deg] -z-10" />
+        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[90deg] -z-10 pointer-events-none select-none" />
+        <.card_back class="absolute left-1/2 bottom-0 -translate-x-1/2 w-32 rotate-[94deg] -z-10 pointer-events-none select-none" />
         <.card card={@game.gamestate.briscola} class="justify-center items-center" />
       </div>
       <div class="flex flex-col justify-center items-center w-64">
@@ -123,7 +123,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       <img
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
         class={[
-          "w-full",
+          "w-full pointer-events-none select-none",
           @selected == true && "outline outline-2 outline-offset-2 outline-card_highlight rounded-sm"
         ]}
       />
