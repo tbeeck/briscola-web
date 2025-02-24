@@ -1,4 +1,5 @@
 defmodule BriscolinoWeb.LiveGame.Lobby do
+  alias Briscolino.LobbyServer.LobbyState
   use BriscolinoWeb, :live_view
 
   import BriscolinoWeb.LiveGame.LobbyComponents
@@ -44,6 +45,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     |> assign(:leader, LobbyServer.find_leader(lobby))
     |> assign(:lobby_pid, pid)
     |> assign(:player_id, player_id)
+    |> update_page_title(lobby)
   end
 
   @impl true
@@ -133,6 +135,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       socket
       |> assign(:lobby, lobby)
       |> assign(:leader, LobbyServer.find_leader(lobby))
+      |> update_page_title(lobby)
 
     {:noreply, socket}
   end
@@ -143,7 +146,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     {:noreply, redirect(socket, to: ~p"/game/#{game_id}")}
   end
 
-  defp is_leader(socket) do
-    socket.assigns.leader.id == socket.assigns.player_id
+  defp update_page_title(socket, %LobbyState{players: players} = state) do
+    assign(socket, :page_title, "#{length(players)}/4 players")
   end
 end

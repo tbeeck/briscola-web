@@ -32,7 +32,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> assign(:player_index, player_index(state, session))
       |> assign(:player_id, session["session_id"])
       |> assign(:selected, nil)
-      |> assign(:status_message, "...")
+      |> update_page_title(state)
 
     # Update the status message & timer
     socket =
@@ -96,6 +96,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       |> assign(:game, state)
       |> assign(:status_message, new_message)
       |> update_timer(state)
+      |> update_page_title(state)
 
     {:noreply, socket}
   end
@@ -180,5 +181,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
       nil -> socket
       timer -> push_event(socket, "timer", %{"remaining" => Process.read_timer(timer)})
     end
+  end
+
+  defp update_page_title(socket, %ServerState{} = state) do
+    assign(socket, :page_title, get_status_message(state, socket))
   end
 end
