@@ -142,7 +142,6 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
 
   @impl true
   def handle_info({:game_start, game_id}, socket) do
-    IO.inspect(game_id, label: "Game start id")
     {:noreply, redirect(socket, to: ~p"/game/#{game_id}")}
   end
 
