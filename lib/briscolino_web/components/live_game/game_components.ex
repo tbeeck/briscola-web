@@ -161,7 +161,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             <div class="flex flex-col flex-grow">
               <div class="text-md">{info.name}</div>
               <div class="flex flex-row items-center w-full">
-                {player_status(@game, idx)}
                 <div class="pl-4 text-md">
                   [ {player_score(@game, idx)} ]
                 </div>
@@ -179,18 +178,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       !Briscola.Game.needs_redeal?(state.gamestate) and
       !Briscola.Game.should_score_trick?(state.gamestate) and
       !Briscola.Game.game_over?(state.gamestate)
-  end
-
-  defp player_status(%ServerState{} = state, player_index) do
-    if players_turn(state, player_index) do
-      assigns = %{}
-
-      ~H"""
-      <.animated_elipsis />
-      """
-    else
-      ""
-    end
   end
 
   def animated_elipsis(assigns) do
