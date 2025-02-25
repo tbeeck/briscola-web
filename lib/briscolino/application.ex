@@ -12,9 +12,9 @@ defmodule Briscolino.Application do
       {Phoenix.PubSub, name: Briscolino.PubSub},
       Briscolino.Presence,
       Briscolino.GameSupervisor,
-      {Horde.Registry, keys: :unique, name: Briscolino.GameRegistry},
+      {Registry, keys: :unique, name: Briscolino.GameRegistry},
       Briscolino.LobbySupervisor,
-      {Horde.Registry, keys: :unique, name: Briscolino.LobbyRegistry},
+      {Registry, keys: :unique, name: Briscolino.LobbyRegistry},
       BriscolinoWeb.Telemetry,
       # Start to serve requests, typically the last entry
       BriscolinoWeb.Endpoint

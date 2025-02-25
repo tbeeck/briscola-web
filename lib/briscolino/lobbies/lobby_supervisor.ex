@@ -1,17 +1,17 @@
 defmodule Briscolino.LobbySupervisor do
-  use Horde.DynamicSupervisor
-
   alias Briscolino.LobbyServer
   alias Briscolino.ShortId
   alias Briscolino.LobbyServer.LobbyState
 
+  use DynamicSupervisor
+
   @impl true
   def init(_) do
-    Horde.DynamicSupervisor.init(strategy: :one_for_one)
+    DynamicSupervisor.init(strategy: :one_for_one)
   end
 
   def start_link(arg) do
-    Horde.DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
+    DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
   @spec new_lobby() :: {:error, any()} | {:ok, pid()}
@@ -21,7 +21,7 @@ defmodule Briscolino.LobbySupervisor do
       players: []
     }
 
-    case Horde.DynamicSupervisor.start_child(__MODULE__, %{
+    case DynamicSupervisor.start_child(__MODULE__, %{
            id: :ignored,
            restart: :transient,
            start: {Briscolino.LobbyServer, :start_link, [state]}
@@ -35,7 +35,7 @@ defmodule Briscolino.LobbySupervisor do
   def get_lobby_pid(lobby_id) do
     process_name = LobbyServer.lobby_topic(lobby_id)
 
-    case Horde.Registry.lookup(Briscolino.LobbyRegistry, process_name) do
+    case Registry.lookup(Briscolino.LobbyRegistry, process_name) do
       [] -> nil
       [{pid, _}] -> pid
     end
@@ -43,7 +43,7 @@ defmodule Briscolino.LobbySupervisor do
 
   @spec active_lobbies() :: %{binary() => pid()}
   def active_lobbies() do
-    Horde.DynamicSupervisor.which_children(__MODULE__)
+    DynamicSupervisor.which_children(__MODULE__)
     |> Stream.filter(&match?({_, _pid, :worker, [LobbyServer]}, &1))
     |> Stream.map(fn {_, pid, _, _} -> pid end)
     |> Enum.to_list()
@@ -56,7 +56,7 @@ defmodule Briscolino.LobbySupervisor do
 
   @spec active_lobby_pids() :: [pid()]
   def active_lobby_pids() do
-    Horde.DynamicSupervisor.which_children(__MODULE__)
+    DynamicSupervisor.which_children(__MODULE__)
     |> Stream.filter(&match?({_, _pid, :worker, [LobbyServer]}, &1))
     |> Stream.map(fn {_, pid, _, _} -> pid end)
     |> Enum.to_list()
