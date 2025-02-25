@@ -44,7 +44,7 @@ defmodule Briscolino.GameServer do
 
   def start_link(game) do
     GenServer.start_link(__MODULE__, game,
-      name: {:via, Registry, {Briscolino.GameRegistry, game_topic(game.id)}}
+      name: {:via, Horde.Registry, {Briscolino.GameRegistry, game_topic(game.id)}}
     )
   end
 

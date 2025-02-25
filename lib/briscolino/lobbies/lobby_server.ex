@@ -34,7 +34,7 @@ defmodule Briscolino.LobbyServer do
 
   def start_link(%LobbyState{} = lobby) do
     GenServer.start_link(__MODULE__, lobby,
-      name: {:via, Registry, {Briscolino.LobbyRegistry, lobby_topic(lobby.id)}}
+      name: {:via, Horde.Registry, {Briscolino.LobbyRegistry, lobby_topic(lobby.id)}}
     )
   end
 

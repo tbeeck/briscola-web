@@ -1,13 +1,18 @@
 defmodule Briscolino.GameSupervisor do
-  use DynamicSupervisor
+  use Horde.DynamicSupervisor
 
   alias Briscolino.GameServer.GameClock
   alias Briscolino.GameServer
   alias Briscolino.GameServer.ServerState
   alias Briscolino.GameServer.PlayerInfo
 
+  @impl true
+  def init(_) do
+    Horde.DynamicSupervisor.init(strategy: :one_for_one)
+  end
+
   def start_link(arg) do
-    DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
+    Horde.DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
   @spec new_game([PlayerInfo.t()]) :: {:error, any()} | {:ok, pid()}
@@ -49,7 +54,7 @@ defmodule Briscolino.GameSupervisor do
 
   @spec make_game(ServerState.t()) :: {:error, any()} | {:ok, pid()}
   defp make_game(%ServerState{} = state) do
-    case DynamicSupervisor.start_child(__MODULE__, %{
+    case Horde.DynamicSupervisor.start_child(__MODULE__, %{
            id: :ignored,
            restart: :transient,
            start: {Briscolino.GameServer, :start_link, [state]}
@@ -61,7 +66,7 @@ defmodule Briscolino.GameSupervisor do
 
   @spec active_games() :: %{binary() => pid()}
   def active_games() do
-    DynamicSupervisor.which_children(__MODULE__)
+    Horde.DynamicSupervisor.which_children(__MODULE__)
     |> Stream.filter(&match?({_, _pid, :worker, [GameServer]}, &1))
     |> Stream.map(fn {_, pid, _, _} -> pid end)
     |> Stream.map(&Task.async(fn -> {&1, GameServer.state(&1)} end))
@@ -73,7 +78,7 @@ defmodule Briscolino.GameSupervisor do
 
   @spec active_games() :: [pid()]
   def active_game_pids() do
-    DynamicSupervisor.which_children(__MODULE__)
+    Horde.DynamicSupervisor.which_children(__MODULE__)
     |> Stream.filter(&match?({_, _pid, :worker, [GameServer]}, &1))
     |> Stream.map(fn {_, pid, _, _} -> pid end)
     |> Enum.to_list()
@@ -83,13 +88,9 @@ defmodule Briscolino.GameSupervisor do
   def get_game_pid(game_id) do
     process_name = GameServer.game_topic(game_id)
 
-    case Registry.lookup(Briscolino.GameRegistry, process_name) do
+    case Horde.Registry.lookup(Briscolino.GameRegistry, process_name) do
       [] -> nil
       [{pid, _}] -> pid
     end
-  end
-
-  def init(_) do
-    DynamicSupervisor.init(strategy: :one_for_one)
   end
 end
