@@ -53,7 +53,7 @@ defmodule BriscolinoWeb.DebugController do
       |> GameSupervisor.get_game_pid()
 
     if Process.alive?(pid) do
-      Briscolino.GameServer.end_game(pid, true)
+      Briscolino.GameServer.end_game(pid)
 
       conn
       |> put_flash(:info, "Game ended successfully")

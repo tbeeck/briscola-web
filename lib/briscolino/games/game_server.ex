@@ -71,20 +71,12 @@ defmodule Briscolino.GameServer do
     GenServer.call(pid, :state)
   end
 
-  def end_game(pid, force \\ false) do
-    case GenServer.call(pid, :result) do
-      nil ->
-        if force do
-          GenServer.stop(pid)
-          []
-        else
-          nil
-        end
+  def end_game(pid) do
+    GenServer.stop(pid)
+  end
 
-      result ->
-        GenServer.stop(pid)
-        result
-    end
+  def new_game(pid) do
+    GenServer.call(pid, :new_game)
   end
 
   @impl true
@@ -117,11 +109,18 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
-  def handle_call(:result, _from, state) do
-    if Briscola.Game.game_over?(state.gamestate) do
-      {:reply, Enum.sort_by(state.gamestate.players, &Briscola.Player.score(&1), :desc), state}
-    else
-      {:reply, nil, state}
+  def handle_call(:new_game, _from, %ServerState{gamestate: game} = state) do
+    cond do
+      Briscola.Game.game_over?(game) ->
+        new_state =
+          %ServerState{state | gamestate: Briscola.Game.new(players: length(game.players))}
+          |> schedule_transition()
+          |> notify()
+
+        {:reply, :ok, new_state}
+
+      true ->
+        {:reply, {:error, :game_not_over}, state}
     end
     |> with_timeout()
   end

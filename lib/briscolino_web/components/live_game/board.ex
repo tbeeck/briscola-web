@@ -70,9 +70,12 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <div class="mt-20">
           <h1 class="text-lg text-gray-200">{@status_message}</h1>
         </div>
-        <div class="mt-20">
+        <div class="mt-20 flex flex-col items-center justify-center space-y-4">
           <%= if should_show_podium(@game) do %>
             <.podium game={@game} />
+            <.pixel_button icon="hero-arrow-path" phx-click="new-game">
+              Play Again
+            </.pixel_button>
           <% else %>
             <.trick game={@game} />
           <% end %>
@@ -139,6 +142,19 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def handle_event("clear-selection", _params, socket),
     do: {:noreply, assign(socket, :selected, nil)}
+
+  @impl true
+  def handle_event("new-game", _params, socket) do
+    socket =
+      case Briscolino.GameServer.new_game(socket.assigns.game_pid) do
+        :ok ->
+          socket
+
+        {:error, err} ->
+          socket |> put_flash(:error, "Error starting new game: #{err}")
+      end
+    {:noreply, socket}
+  end
 
   def select_card(card_idx, _params, socket) do
     if hand_length(socket) > card_idx do
