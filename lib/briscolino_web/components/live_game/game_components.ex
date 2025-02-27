@@ -153,7 +153,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <ul class="pl-4 text-primary_text space-y-4">
       <%= for {idx, info, _playerstate} <- players(@game) do %>
-        <li  id={"player-list-#{idx}"} class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
+        <li
+          id={"player-list-#{idx}"}
+          class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}
+        >
           <div class="flex flex-row items-center p-2">
             <div class="rounded-full w-12 h-12 mr-4 outline flex items-center justify-center">
               Image

@@ -149,7 +149,9 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
-  def handle_info(:score, state) do
+  def handle_info(:score, %ServerState{} = state) do
+    trick_points = Enum.sum_by(state.gamestate.trick, &Briscola.Card.score/1)
+
     case Briscola.Game.score_trick(state.gamestate) do
       {:error, _err} ->
         {:noreply, state}
@@ -160,7 +162,7 @@ defmodule Briscolino.GameServer do
           |> schedule_transition()
           |> notify()
 
-        notify_trick(state, winner)
+        notify_trick(state, winner, trick_points)
 
         {:noreply, new_state}
     end
@@ -227,11 +229,11 @@ defmodule Briscolino.GameServer do
     state
   end
 
-  defp notify_trick(state, trick_winner) do
+  defp notify_trick(state, trick_winner, points) do
     Phoenix.PubSub.broadcast(
       Briscolino.PubSub,
       game_topic(state.id),
-      {:trick_scored, trick_winner}
+      {:trick_scored, trick_winner, points}
     )
 
     state

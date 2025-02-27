@@ -102,10 +102,10 @@ defmodule BriscolinoWeb.LiveGame.Board do
   end
 
   @impl true
-  def handle_info({:trick_scored, winner}, socket) do
+  def handle_info({:trick_scored, winner, points}, socket) do
     socket =
       socket
-      |> do_trick_celebration(winner, 10)
+      |> do_trick_celebration(winner, points)
 
     {:noreply, socket}
   end
