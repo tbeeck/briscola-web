@@ -153,6 +153,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         {:error, err} ->
           socket |> put_flash(:error, "Error starting new game: #{err}")
       end
+
     {:noreply, socket}
   end
 
