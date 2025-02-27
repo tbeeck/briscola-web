@@ -71,7 +71,11 @@ defmodule BriscolinoWeb.LiveGame.Board do
           <h1 class="text-lg text-gray-200">{@status_message}</h1>
         </div>
         <div class="mt-20">
-          <.trick game={@game} />
+          <%= if should_show_podium(@game) do %>
+            <.podium game={@game} />
+          <% else %>
+            <.trick game={@game} />
+          <% end %>
         </div>
         <%= if @player_index do %>
           <div class="fixed bottom-8 left-1/2 -translate-x-1/2">
@@ -155,6 +159,11 @@ defmodule BriscolinoWeb.LiveGame.Board do
       idx -> length(Enum.at(socket.assigns.game.gamestate.players, idx).hand)
     end
   end
+
+  # Note: this should probably just be game_over but ATM game_over returns true
+  # even before last trick is scored. Need to fix in briscola module
+  defp should_show_podium(%ServerState{gamestate: game}),
+    do: Briscola.Game.game_over?(game) and !Briscola.Game.should_score_trick?(game)
 
   defp get_status_message(%ServerState{gamestate: game, playerinfo: players}, socket) do
     cond do

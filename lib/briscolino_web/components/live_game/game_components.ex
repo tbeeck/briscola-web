@@ -176,21 +176,35 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
+  @doc """
+  Render the game-end podium
+  """
+  attr :game, ServerState, required: true
+
+  def podium(assigns) do
+    ~H"""
+    <div class="h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover
+                flex justify-center items-center">
+      <ul>
+        <%= for {place, points, players} <- rankings(@game) do %>
+          <li>
+            {place + 1}:
+            <span class="text-gray-400">({points} pts)</span> {Enum.map(players, fn {_, info, _} ->
+              info.name
+            end)
+            |> Enum.join(", ")}
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    """
+  end
+
   defp players_turn(state, player_index) do
     state.gamestate.action_on == player_index and
       !Briscola.Game.needs_redeal?(state.gamestate) and
       !Briscola.Game.should_score_trick?(state.gamestate) and
       !Briscola.Game.game_over?(state.gamestate)
-  end
-
-  def animated_elipsis(assigns) do
-    ~H"""
-    <div class="w-auto flex flex-row items-center">
-      <div class="bg-gray-500 w-2 h-2" />
-      <div class="bg-gray-500 w-2 h-2 ml-2" />
-      <div class="bg-gray-500 w-2 h-2 ml-2" />
-    </div>
-    """
   end
 
   defp player_score(%ServerState{gamestate: game}, player_index),
@@ -202,6 +216,28 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     |> Enum.zip(game.players)
     |> Enum.map(fn {{info, idx}, game_player} ->
       {idx, info, game_player}
+    end)
+  end
+
+  defp rankings(%ServerState{} = state) do
+    all_players = players(state)
+
+    players_by_scores =
+      all_players
+      |> Enum.group_by(fn {_, _, game_player} ->
+        Briscola.Player.score(game_player)
+      end)
+
+    Map.keys(players_by_scores)
+    |> Enum.sort()
+    |> Enum.reverse()
+    |> Enum.with_index()
+    |> Enum.map(fn {score, rank} ->
+      players =
+        Map.get(players_by_scores, score)
+        |> Enum.map(fn {idx, _, _} -> Enum.at(all_players, idx) end)
+
+      {rank, score, players}
     end)
   end
 
