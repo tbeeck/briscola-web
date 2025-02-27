@@ -39,6 +39,7 @@ defmodule Briscolino.GameServer do
     defstruct [:gamestate, :playerinfo, :id, :clock]
   end
 
+  def game_pg(game_id), do: "game:#{game_id}"
   def game_topic(game_id), do: "gamestate:#{game_id}"
   def game_presence_topic(game_id), do: "game-presence:#{game_id}"
 
@@ -72,7 +73,9 @@ defmodule Briscolino.GameServer do
   end
 
   def end_game(pid) do
-    GenServer.stop(pid)
+    {:ok, state} = state(pid)
+    :ok = GenServer.stop(pid)
+    :pg.leave(game_pg(state.id), pid)
   end
 
   def new_game(pid) do
@@ -80,7 +83,8 @@ defmodule Briscolino.GameServer do
   end
 
   @impl true
-  def init(state) do
+  def init(%ServerState{} = state) do
+    :pg.join(game_pg(state.id), self())
     state = schedule_transition(state)
     {:ok, state, @cleanup_timeout}
   end
@@ -187,6 +191,7 @@ defmodule Briscolino.GameServer do
 
   @impl true
   def handle_info(:timeout, %ServerState{} = state) do
+    :pg.leave(game_pg(state.id), self())
     {:stop, :normal, state}
   end
 

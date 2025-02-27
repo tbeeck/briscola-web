@@ -81,11 +81,9 @@ defmodule Briscolino.GameSupervisor do
 
   @spec get_game_pid(binary()) :: pid() | nil
   def get_game_pid(game_id) do
-    process_name = GameServer.game_topic(game_id)
-
-    case Registry.lookup(Briscolino.GameRegistry, process_name) do
+    case :pg.get_members(GameServer.game_pg(game_id)) do
+      [pid | _] -> pid
       [] -> nil
-      [{pid, _}] -> pid
     end
   end
 

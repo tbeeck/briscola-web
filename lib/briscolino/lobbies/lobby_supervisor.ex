@@ -33,11 +33,9 @@ defmodule Briscolino.LobbySupervisor do
 
   @spec get_lobby_pid(binary()) :: pid() | nil
   def get_lobby_pid(lobby_id) do
-    process_name = LobbyServer.lobby_topic(lobby_id)
-
-    case Registry.lookup(Briscolino.LobbyRegistry, process_name) do
+    case :pg.get_members(LobbyServer.lobby_pg(lobby_id)) do
+      [pid | _] -> pid
       [] -> nil
-      [{pid, _}] -> pid
     end
   end
 

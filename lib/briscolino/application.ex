@@ -11,6 +11,7 @@ defmodule Briscolino.Application do
       {DNSCluster, query: Application.get_env(:briscolino, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Briscolino.PubSub},
       Briscolino.Presence,
+      %{id: :pg, start: {:pg, :start_link, []}},
       Briscolino.GameSupervisor,
       {Registry, keys: :unique, name: Briscolino.GameRegistry},
       Briscolino.LobbySupervisor,

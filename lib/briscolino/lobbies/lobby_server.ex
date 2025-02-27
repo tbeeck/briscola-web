@@ -29,6 +29,7 @@ defmodule Briscolino.LobbyServer do
     defstruct [:id, :players]
   end
 
+  def lobby_pg(lobby_id), do: lobby_topic(lobby_id)
   def lobby_topic(lobby_id), do: "lobby:#{lobby_id}"
   def lobby_presence_topic(lobby_id), do: "lobby-presence:#{lobby_id}"
 
@@ -64,6 +65,7 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def init(%LobbyState{} = arg) do
+    :pg.join(lobby_pg(arg.id), self())
     PubSub.subscribe(Briscolino.PubSub, lobby_presence_topic(arg.id))
     {:ok, arg, @cleanup_timeout}
   end
@@ -98,11 +100,13 @@ defmodule Briscolino.LobbyServer do
 
   @impl true
   def handle_info(:stop, %LobbyState{} = state) do
+    :pg.leave(lobby_pg(state.id), self())
     {:stop, :normal, state}
   end
 
   @impl true
   def handle_info(:timeout, %LobbyState{} = state) do
+    :pg.leave(lobby_pg(state.id), self())
     {:stop, :normal, state}
   end
 
