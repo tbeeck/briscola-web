@@ -4,16 +4,49 @@
 
 /* This file is for your main application CSS */
 @font-face {
-    font-family: 'Inconsolata';
-    src: url('/fonts/Inconsolata-VariableFont_wdth,wght.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "Inconsolata";
+  src: url("/fonts/Inconsolata-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-    font-family: 'Inconsolata', sans-serif;
+  font-family: "Inconsolata", sans-serif;
 }
 
 @utility btn-text-shadow {
-    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.40);
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes pointsGained {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(40px, 0px);
+  }
+}
+
+.points-indicator {
+  position: absolute;
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 24px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  animation: pointsGained 1.5s ease-out forwards;
+  pointer-events: none;
+}
+
+.points-small {
+  color: #ffffff; /* White for small point gains */
+}
+
+.points-medium {
+  color: #55b258; /* Green for medium point gains */
+}
+
+.points-large {
+  color: #ffba60; /* Orange for large point gains */
 }

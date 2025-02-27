@@ -50,7 +50,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="bg-board w-screen h-screen">
+    <div id="board" phx-hook="PlusPoints" class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
         <.player_list game={@game} />
@@ -103,8 +103,10 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   @impl true
   def handle_info({:trick_scored, winner}, socket) do
-    _who_won = Enum.at(socket.assigns.game.playerinfo, winner).name
-    # TODO trigger confetti or something probably client-side
+    socket =
+      socket
+      |> do_trick_celebration(winner, 10)
+
     {:noreply, socket}
   end
 
@@ -181,6 +183,11 @@ defmodule BriscolinoWeb.LiveGame.Board do
       nil -> socket
       timer -> push_event(socket, "timer", %{"remaining" => Process.read_timer(timer)})
     end
+  end
+
+  defp do_trick_celebration(socket, player, points) do
+    socket
+    |> push_event("points", %{"player" => player, "delta" => points})
   end
 
   defp update_page_title(socket, %ServerState{} = state) do
