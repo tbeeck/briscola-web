@@ -32,6 +32,18 @@ defmodule BriscolinoWeb.UserSessions do
     end
   end
 
+  def assign_device(conn, _opts) do
+    user_agent = get_req_header(conn, "user-agent") |> List.first() || ""
+
+    device_type =
+      cond do
+        Regex.match?(~r/mobile/i, user_agent) -> :mobile
+        true -> :desktop
+      end
+
+    put_session(conn, :device_type, device_type)
+  end
+
   def random_player_id() do
     ShortId.new() <> ShortId.new()
   end

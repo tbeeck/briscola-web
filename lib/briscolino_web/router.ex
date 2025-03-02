@@ -10,6 +10,7 @@ defmodule BriscolinoWeb.Router do
     plug :fetch_session
     plug :assign_session_id
     plug :assign_username
+    plug :assign_device
     plug :fetch_live_flash
     plug :put_root_layout, html: {BriscolinoWeb.Layouts, :root}
     plug :protect_from_forgery

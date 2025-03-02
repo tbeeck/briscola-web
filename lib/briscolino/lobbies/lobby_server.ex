@@ -257,11 +257,9 @@ defmodule Briscolino.LobbyServer do
   defp with_timeout({:noreply, state}) do
     cond do
       find_leader(state) == nil ->
-        IO.inspect("Fast cleanpu for lobby #{state.id}")
         {:noreply, state, @fast_cleanup_timeout}
 
       true ->
-        IO.inspect("Slow cleanpu for lobby #{state.id}")
         {:noreply, state, @cleanup_timeout}
     end
   end
