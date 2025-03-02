@@ -29,9 +29,8 @@ const PlusPoints = {
       .getElementById(`player-points-${player}`)
       .getBoundingClientRect();
     // Position where the points were earned
-    pointsElement.style.left = playerListRect.x + playerListRect.width + "px";
-    pointsElement.style.top =
-      playerListRect.y + Math.floor(playerListRect.height / 4) + "px";
+    pointsElement.style.left = playerListRect.x + "px";
+    pointsElement.style.top = playerListRect.y - 10 + "px";
     this.el.appendChild(pointsElement);
 
     // Remove the element after animation completes
