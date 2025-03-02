@@ -116,7 +116,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <div class="mt-8 w-full h-24">
           <.player_list_mobile game={@game} />
         </div>
-        <div class="flex flex-col items-center justify-center space-y-4">
+        <div class="flex flex-col items-center justify-center space-y-4 pt-4">
           <%= if should_show_podium(@game) do %>
             <.podium_mobile game={@game} />
             <.pixel_button icon="hero-arrow-path" phx-click="new-game">
