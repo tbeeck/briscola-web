@@ -16,7 +16,8 @@ module.exports = {
       colors: {
         primary_text: "#C3C2C3",
         board: "#17191C",
-        card_highlight: "#B9BACC"
+        card_highlight: "#B9BACC",
+        player_name_highlight: "#E5B93A"
       }
     },
   },
