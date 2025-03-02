@@ -56,6 +56,13 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   @impl true
   def render(assigns) do
+    case assigns.device_type do
+      :mobile -> render_mobile(assigns)
+      :desktop -> render_desktop(assigns)
+    end
+  end
+
+  def render_desktop(assigns) do
     ~H"""
     <div id="board" phx-hook="PlusPoints" class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
@@ -98,6 +105,12 @@ defmodule BriscolinoWeb.LiveGame.Board do
         </div>
       </div>
     </div>
+    """
+  end
+
+  def render_mobile(assigns) do
+    ~H"""
+    <pre>{inspect(@game, pretty: true)}</pre>
     """
   end
 
