@@ -58,6 +58,6 @@ defmodule BriscolinoWeb.UserSessions do
     adjective =
       Enum.random(@username_config["adjectives"])[gender]
 
-    noun <> adjective
+    noun <> " " <> adjective
   end
 end

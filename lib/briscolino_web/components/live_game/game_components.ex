@@ -90,7 +90,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
           card={card}
           phx-click={"select-#{idx}"}
           selected={@selected && @selected == idx}
-          size="w-28 h-52 md:w-32 md:h-64 shrink-0"
+          size="w-24 h-48 md:w-32 md:h-64 shrink-0"
         />
       <% end %>
     </div>
@@ -199,16 +199,18 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def player_list_mobile(assigns) do
     ~H"""
-    <ul class="flex flex-row items-center w-full">
-      <%= for {idx, _info, _playerstate} <- players(@game) do %>
-        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
-          <div class="flex flex-col items-center justify-center p-2">
-            <div class="rounded-full w-16 h-16 outline flex items-center justify-center">
-              Image
-            </div>
-            <div id={"player-points-#{idx}"} class="text-md pt-2">
-              [ {player_score(@game, idx)} ]
-            </div>
+    <ul class="flex flex-row items-center w-full h-full">
+      <%= for {idx, info, _playerstate} <- players(@game) do %>
+        <li class={[
+          players_turn(@game, idx) && "bg-gray-600",
+          "w-full h-full flex flex-col items-center justify-center",
+          "rounded-md p-2"
+        ]}>
+          <div class="grow overflow-hidden text-ellipsis break-words line-clamp-2">
+            {info.name}
+          </div>
+          <div id={"player-points-#{idx}"} class="text-md pt-2">
+            [ {player_score(@game, idx)} ]
           </div>
         </li>
       <% end %>

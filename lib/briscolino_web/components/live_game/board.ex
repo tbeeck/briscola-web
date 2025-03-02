@@ -113,7 +113,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         <div class="mt-8">
           <h1 class="text-lg text-gray-200">{@status_message}</h1>
         </div>
-        <div class="mt-8 w-full">
+        <div class="mt-8 w-full h-24">
           <.player_list_mobile game={@game} />
         </div>
         <div class="flex flex-col items-center justify-center space-y-4">
