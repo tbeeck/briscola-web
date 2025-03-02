@@ -26,7 +26,7 @@ const PlusPoints = {
     }
 
     const playerListRect = document
-      .getElementById(`player-list-${player}`)
+      .getElementById(`player-points-${player}`)
       .getBoundingClientRect();
     // Position where the points were earned
     pointsElement.style.left = playerListRect.x + playerListRect.width + "px";

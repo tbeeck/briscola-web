@@ -172,10 +172,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <ul class="pl-4 text-primary_text space-y-4">
       <%= for {idx, info, _playerstate} <- players(@game) do %>
-        <li
-          id={"player-list-#{idx}"}
-          class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}
-        >
+        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
           <div class="flex flex-row items-center p-2">
             <div class="rounded-full w-12 h-12 mr-4 outline flex items-center justify-center">
               Image
@@ -183,7 +180,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             <div class="flex flex-col flex-grow">
               <div class="text-md">{info.name}</div>
               <div class="flex flex-row items-center w-full">
-                <div class="pl-4 text-md">
+                <div id={"player-points-#{idx}"} class="pl-4 text-md">
                   [ {player_score(@game, idx)} ]
                 </div>
               </div>
@@ -204,15 +201,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <ul class="flex flex-row items-center w-full">
       <%= for {idx, _info, _playerstate} <- players(@game) do %>
-        <li
-          id={"player-list-#{idx}"}
-          class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}
-        >
+        <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
           <div class="flex flex-col items-center justify-center p-2">
             <div class="rounded-full w-16 h-16 outline flex items-center justify-center">
               Image
             </div>
-            <div class="text-md pt-2">
+            <div id={"player-points-#{idx}"} class="text-md pt-2">
               [ {player_score(@game, idx)} ]
             </div>
           </div>
