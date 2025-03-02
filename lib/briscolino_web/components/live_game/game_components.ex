@@ -37,7 +37,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     ~H"""
     <div class="bg-gray-900 rounded-lg text-md">
       <div class="flex flex-row items-center flex-wrap p-2">
-        <span class="mx-4">Briscola</span>
+        <span class="mx-4 flex-grow">Briscola</span>
         <div class="flex flex-row items-center bg-gray-800 rounded-lg py-1 px-4 space-x-2">
           <img src={"/images/cards/fantasy/#{@card.suit}.png"} class="w-4 h-4" />
           <span>{Integer.to_string(@card.rank)}</span>
@@ -55,7 +55,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def action_panel(assigns) do
     ~H"""
-    <div class="flex justify-center items-center space-x-4 text-lg">
+    <div class="flex justify-center items-center space-x-4 text-lg mt-2">
       <.pixel_button
         icon="hero-x-mark"
         text_style="text-red-400 hover:text-red-200"
@@ -84,9 +84,14 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def hand(assigns) do
     ~H"""
-    <div class="w-128 flex items-center justify-center space-x-4">
+    <div class="w-full md:w-128 flex items-start justify-center space-x-4">
       <%= for {card, idx} <- Enum.with_index(@cards) do %>
-        <.card card={card} phx-click={"select-#{idx}"} selected={@selected && @selected == idx} />
+        <.card
+          card={card}
+          phx-click={"select-#{idx}"}
+          selected={@selected && @selected == idx}
+          size="w-28 h-52 md:w-32 md:h-64 shrink-0"
+        />
       <% end %>
     </div>
     """
@@ -100,13 +105,26 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def trick(assigns) do
     ~H"""
-    <div class="h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover">
+    <.trick_area size="h-[295px] w-[588px]">
       <div class="flex items-center justify-center h-full space-x-4 z-10">
         <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
           <.card card={card} />
         <% end %>
       </div>
-    </div>
+    </.trick_area>
+    """
+  end
+
+  @spec trick_mobile(any()) :: Phoenix.LiveView.Rendered.t()
+  def trick_mobile(assigns) do
+    ~H"""
+    <.trick_area size="h-[150px] w-[300px]">
+      <div class="flex items-center justify-center h-full -space-x-4 z-10">
+        <%= for card <- Enum.reverse(@game.gamestate.trick) do %>
+          <.card card={card} size="w-24 h-48" />
+        <% end %>
+      </div>
+    </.trick_area>
     """
   end
 
@@ -115,11 +133,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   """
   attr :card, Briscola.Card, required: true
   attr :selected, :boolean, required: false, default: false
+  attr :size, :string, required: false, default: "w-32 h-64"
   attr :rest, :global
 
   def card(assigns) do
     ~H"""
-    <div class="w-32 h-64 flex items-center" {@rest}>
+    <div class={["flex items-center", @size]} {@rest}>
       <img
         src={"/images/cards/fantasy/#{@card.rank}_#{@card.suit}.png"}
         class={[
@@ -145,7 +164,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   end
 
   @doc """
-  Renders players in the sidebar
+  Vertical player list
   """
   attr :game, ServerState, required: true
 
@@ -177,25 +196,96 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   end
 
   @doc """
+  Horizontal player list
+  """
+  attr :game, ServerState, required: true
+
+  def player_list_mobile(assigns) do
+    ~H"""
+    <ul class="flex flex-row items-center w-full">
+      <%= for {idx, _info, _playerstate} <- players(@game) do %>
+        <li
+          id={"player-list-#{idx}"}
+          class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}
+        >
+          <div class="flex flex-col items-center justify-center p-2">
+            <div class="rounded-full w-16 h-16 outline flex items-center justify-center">
+              Image
+            </div>
+            <div class="text-md pt-2">
+              [ {player_score(@game, idx)} ]
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+    """
+  end
+
+  @doc """
   Render the game-end podium
   """
   attr :game, ServerState, required: true
 
   def podium(assigns) do
     ~H"""
-    <div class="h-[295px] w-[588px] bg-[url(/images/board.png)] bg-cover
-                flex justify-center items-center">
-      <ul>
-        <%= for {place, points, players} <- rankings(@game) do %>
-          <li>
-            {place + 1}:
-            <span class="text-gray-400">({points} pts)</span> {Enum.map(players, fn {_, info, _} ->
-              info.name
-            end)
-            |> Enum.join(", ")}
-          </li>
-        <% end %>
-      </ul>
+    <.trick_area size="h-[295px] w-[588px]">
+      <.podium_ul game={@game} />
+    </.trick_area>
+    """
+  end
+
+  @doc """
+  Smaller podium
+  """
+  attr :game, ServerState, required: true
+
+  def podium_mobile(assigns) do
+    ~H"""
+    <.trick_area size="h-[150px] w-[300px]">
+      <.podium_ul game={@game} />
+    </.trick_area>
+    """
+  end
+
+  @doc """
+  Inner unordered list for the podium
+  """
+  attr :game, ServerState, required: true
+
+  def podium_ul(assigns) do
+    ~H"""
+    <ul>
+      <%= for {place, points, players} <- rankings(@game) do %>
+        <li>
+          {place + 1}:
+          <span class="text-gray-400">({points} pts)</span> {Enum.map(players, fn {_, info, _} ->
+            info.name
+          end)
+          |> Enum.join(", ")}
+        </li>
+      <% end %>
+    </ul>
+    """
+  end
+
+  @doc """
+  Render the center of the board (where the trick / podium go)
+  """
+  attr :size, :string, required: true
+  slot :inner_block, required: true
+
+  def trick_area(assigns) do
+    ~H"""
+    <div class={[@size, "bg-[url(/images/board.png)] bg-cover flex justify-center items-center"]}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  def game_timer(assigns) do
+    ~H"""
+    <div id="game-timer" phx-hook="GameTimer" class="h-2.5 bg-blue-600 rounded-full" style="width: 0%">
     </div>
     """
   end

@@ -71,13 +71,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
       </div>
 
       <div class="absolute w-1/2 top-0 left-1/2 -translate-x-1/2 h-2.5 bg-gray-200 rounded-full">
-        <div
-          id="game-timer"
-          phx-hook="GameTimer"
-          class="h-2.5 bg-blue-600 rounded-full"
-          style="width: 0%"
-        >
-        </div>
+        <.game_timer />
       </div>
 
       <div class="flex flex-col justify-center items-center">
@@ -110,7 +104,40 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   def render_mobile(assigns) do
     ~H"""
-    <pre>{inspect(@game, pretty: true)}</pre>
+    <div id="board" phx-hook="PlusPoints" class="bg-board w-screen h-screen">
+      <div class="absolute w-full top-0 bg-gray-200 rounded-full">
+        <.game_timer />
+      </div>
+
+      <div class="w-full flex flex-col justify-center items-center">
+        <div class="mt-8">
+          <h1 class="text-lg text-gray-200">{@status_message}</h1>
+        </div>
+        <div class="mt-8 w-full">
+          <.player_list_mobile game={@game} />
+        </div>
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <%= if should_show_podium(@game) do %>
+            <.podium_mobile game={@game} />
+            <.pixel_button icon="hero-arrow-path" phx-click="new-game">
+              Play Again
+            </.pixel_button>
+          <% else %>
+            <div class="mx-4 w-full">
+              <.briscola_badge card={@game.gamestate.briscola} />
+            </div>
+            <.trick_mobile game={@game} />
+          <% end %>
+        </div>
+
+        <%= if @player_index do %>
+          <div class="fixed bottom-8 left-1/2 -translate-x-1/2">
+            <.hand cards={Enum.at(@game.gamestate.players, @player_index).hand} selected={@selected} />
+            <.action_panel game={@game} selected={@selected} />
+          </div>
+        <% end %>
+      </div>
+    </div>
     """
   end
 
