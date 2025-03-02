@@ -41,6 +41,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       |> LobbyServer.state()
 
     socket
+    |> assign(:device_type, UserSessions.get_device(session))
     |> assign(:lobby, lobby)
     |> assign(:leader, LobbyServer.find_leader(lobby))
     |> assign(:lobby_pid, pid)
@@ -50,6 +51,13 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
 
   @impl true
   def render(assigns) do
+    case assigns.device_type do
+      :mobile -> render_mobile(assigns)
+      :desktop -> render_desktop(assigns)
+    end
+  end
+
+  def render_desktop(assigns) do
     ~H"""
     <div class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
@@ -61,6 +69,41 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
           <%= if @leader do %>
             <h1 class="text-2xl">{@leader.name}'s Lobby</h1>
           <% end %>
+        </div>
+        <div class="flex flex-col items-center mt-[10%] space-y-4">
+          <div class="flex flex-row space-x-4">
+            <.pixel_button icon="hero-plus" phx-click="add-ai">
+              Add AI
+            </.pixel_button>
+            <.pixel_button icon="hero-minus" phx-click="remove-ai">
+              Remove AI
+            </.pixel_button>
+          </div>
+          <div class="flex flex-row space-x-4">
+            <.pixel_button icon="hero-link" phx-click={JS.dispatch("phx:copy-link")}>
+              Copy Link
+            </.pixel_button>
+            <.pixel_button icon="hero-play" phx-click="start-game">
+              Start Game
+            </.pixel_button>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def render_mobile(assigns) do
+    ~H"""
+    <div class="bg-board w-screen h-screen">
+      <div class="flex flex-col justify-center items-center">
+        <div class="mt-[10%]">
+          <%= if @leader do %>
+            <h1 class="text-2xl">{@leader.name}'s Lobby</h1>
+          <% end %>
+        </div>
+        <div class="flex flex-col my-auto justify-center">
+          <.lobby_player_list lobby={@lobby} />
         </div>
         <div class="flex flex-col items-center mt-[10%] space-y-4">
           <div class="flex flex-row space-x-4">

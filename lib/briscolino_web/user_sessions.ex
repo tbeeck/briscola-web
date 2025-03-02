@@ -60,4 +60,11 @@ defmodule BriscolinoWeb.UserSessions do
 
     noun <> " " <> adjective
   end
+
+  def get_device(session) do
+    case session["device_type"] do
+      nil -> :desktop
+      val -> val
+    end
+  end
 end

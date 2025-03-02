@@ -1,4 +1,5 @@
 defmodule BriscolinoWeb.LiveGame.Board do
+  alias BriscolinoWeb.UserSessions
   use BriscolinoWeb, :live_view
 
   import BriscolinoWeb.LiveGame.GameComponents
@@ -26,15 +27,9 @@ defmodule BriscolinoWeb.LiveGame.Board do
     {:ok, state} = Briscolino.GameServer.state(game_pid)
     player_id = session["session_id"]
 
-    device =
-      case session["device_type"] do
-        nil -> :desktop
-        val -> val
-      end
-
     socket =
       assign(socket, :game, state)
-      |> assign(:device_type, device)
+      |> assign(:device_type, UserSessions.get_device(session))
       |> assign(:game_pid, game_pid)
       |> assign(:player_index, player_index(state, session))
       |> assign(:player_id, session["session_id"])
