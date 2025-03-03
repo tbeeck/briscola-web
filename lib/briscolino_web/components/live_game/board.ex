@@ -75,7 +75,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         </div>
         <div class="mt-20 flex flex-col items-center justify-center space-y-4">
           <%= if should_show_podium(@game) do %>
-            <.podium game={@game} />
+            <.podium game={@game} highlighted={@player_index} />
             <.pixel_button icon="hero-arrow-path" phx-click="new-game">
               Play Again
             </.pixel_button>
@@ -113,7 +113,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         </div>
         <div class="flex flex-col items-center justify-center space-y-4 pt-4">
           <%= if should_show_podium(@game) do %>
-            <.podium_mobile game={@game} />
+            <.podium_mobile game={@game} highlighted={@player_index} />
             <.pixel_button icon="hero-arrow-path" phx-click="new-game">
               Play Again
             </.pixel_button>

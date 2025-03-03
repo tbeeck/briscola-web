@@ -227,11 +227,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Render the game-end podium
   """
   attr :game, ServerState, required: true
+  attr :highlighted, :integer, required: false, default: nil
 
   def podium(assigns) do
     ~H"""
     <.trick_area size="h-[295px] w-[588px]">
-      <.podium_ul game={@game} />
+      <.podium_ul game={@game} highlighted={@highlighted} />
     </.trick_area>
     """
   end
@@ -240,11 +241,12 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Smaller podium
   """
   attr :game, ServerState, required: true
+  attr :highlighted, :integer, required: false, default: nil
 
   def podium_mobile(assigns) do
     ~H"""
     <.trick_area size="h-[150px] w-[300px]">
-      <.podium_ul game={@game} />
+      <.podium_ul game={@game} highlighted={@highlighted} />
     </.trick_area>
     """
   end
@@ -253,17 +255,20 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Inner unordered list for the podium
   """
   attr :game, ServerState, required: true
+  attr :highlighted, :integer, required: false, default: nil
 
   def podium_ul(assigns) do
     ~H"""
     <ul>
       <%= for {place, points, players} <- rankings(@game) do %>
         <li>
-          {place + 1}:
-          <span class="text-gray-400">({points} pts)</span> {Enum.map(players, fn {_, info, _} ->
-            info.name
-          end)
-          |> Enum.join(", ")}
+          {place + 1}: <span class="text-gray-400">({points} pts)</span>
+          <%= for {{idx, info, _}, i} <- Enum.with_index(players) do %>
+            <.player_name name={info.name} highlighted={@highlighted == idx} class="inline" />
+            <%= if i != length(players)-1 do %>
+              <span> | </span>
+            <% end %>
+          <% end %>
         </li>
       <% end %>
     </ul>
