@@ -175,11 +175,8 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
       <%= for {idx, info, _playerstate} <- players(@game) do %>
         <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
           <div class="flex flex-row items-center p-2">
-            <div class="rounded-full w-12 h-12 mr-4 outline flex items-center justify-center">
-              Image
-            </div>
             <div class="flex flex-col flex-grow">
-              <.player_name name={info.name} highlighted={@highlighted == idx} />
+              <.player_name name={info.name} highlighted={@highlighted == idx} class="font-black text-lg" />
               <div class="flex flex-row items-center w-full">
                 <div id={"player-points-#{idx}"} class="text-md">
                   [ {player_score(@game, idx)} ]
