@@ -266,7 +266,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
           <%= for {{idx, info, _}, i} <- Enum.with_index(players) do %>
             <.player_name name={info.name} highlighted={@highlighted == idx} class="inline" />
             <%= if i != length(players)-1 do %>
-              <span> | </span>
+              <span>|</span>
             <% end %>
           <% end %>
         </li>
