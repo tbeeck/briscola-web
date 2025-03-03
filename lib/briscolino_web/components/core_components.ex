@@ -651,6 +651,22 @@ defmodule BriscolinoWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Player name, conditionally highlighted
+  """
+  attr :name, :string, required: true
+  attr :highlighted, :boolean, default: false
+  attr :class, :string, default: ""
+  attr :rest, :global
+
+  def player_name(assigns) do
+    ~H"""
+    <div {@rest} class={["text-md", @highlighted && "text-player_name_highlight", @class]}>
+      {@name}
+    </div>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

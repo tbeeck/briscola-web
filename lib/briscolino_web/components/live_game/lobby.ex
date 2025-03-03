@@ -46,6 +46,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     |> assign(:leader, LobbyServer.find_leader(lobby))
     |> assign(:lobby_pid, pid)
     |> assign(:player_id, player_id)
+    |> assign(:player_index, player_index(socket, lobby))
     |> update_page_title(lobby)
   end
 
@@ -62,7 +63,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
     <div class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
                   flex flex-col my-auto justify-center">
-        <.lobby_player_list lobby={@lobby} />
+        <.lobby_player_list lobby={@lobby} highlighted={@player_index} />
       </div>
       <div class="flex flex-col justify-center items-center">
         <div class="mt-[10%]">
@@ -103,7 +104,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
           <% end %>
         </div>
         <div class="flex flex-col mt-16 justify-center">
-          <.lobby_player_list lobby={@lobby} />
+          <.lobby_player_list lobby={@lobby} highlighted={@player_index} />
         </div>
       </div>
       <div class="fixed bottom-0 left-1/2 -translate-x-1/2 mb-8
@@ -179,6 +180,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
       socket
       |> assign(:lobby, lobby)
       |> assign(:leader, LobbyServer.find_leader(lobby))
+      |> assign(:player_index, player_index(socket.assigns.player_id, lobby))
       |> update_page_title(lobby)
 
     {:noreply, socket}
@@ -192,4 +194,7 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
   defp update_page_title(socket, %LobbyState{players: players}) do
     assign(socket, :page_title, "#{length(players)}/4 players")
   end
+
+  defp player_index(player_id, %LobbyState{players: players}),
+    do: Enum.find_index(players, fn p -> p.id == player_id end)
 end

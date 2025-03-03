@@ -167,6 +167,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Vertical player list
   """
   attr :game, ServerState, required: true
+  attr :highlighted, :integer, required: false, default: nil
 
   def player_list(assigns) do
     ~H"""
@@ -178,7 +179,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
               Image
             </div>
             <div class="flex flex-col flex-grow">
-              <div class="text-md">{info.name}</div>
+              <.player_name name={info.name} highlighted={@highlighted == idx} />
               <div class="flex flex-row items-center w-full">
                 <div id={"player-points-#{idx}"} class="pl-4 text-md">
                   [ {player_score(@game, idx)} ]
@@ -196,6 +197,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
   Horizontal player list
   """
   attr :game, ServerState, required: true
+  attr :highlighted, :integer, required: false, default: nil
 
   def player_list_mobile(assigns) do
     ~H"""
@@ -206,9 +208,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
           "w-full h-full flex flex-col items-center justify-center",
           "rounded-md p-2"
         ]}>
-          <div class="grow overflow-hidden text-ellipsis break-words line-clamp-2">
-            {info.name}
-          </div>
+          <.player_name
+            name={info.name}
+            highlighted={@highlighted == idx}
+            class="grow overflow-hidden text-ellipsis break-words line-clamp-2"
+          />
           <div id={"player-points-#{idx}"} class="text-md pt-2">
             [ {player_score(@game, idx)} ]
           </div>
@@ -279,12 +283,16 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     """
   end
 
+  @doc """
+  Game timer at the top of the screen, with its relevant hook / id
+  """
   def game_timer(assigns) do
     ~H"""
     <div id="game-timer" phx-hook="GameTimer" class="h-2.5 bg-blue-600 rounded-full" style="width: 0%">
     </div>
     """
   end
+
 
   defp players_turn(state, player_index) do
     state.gamestate.action_on == player_index and

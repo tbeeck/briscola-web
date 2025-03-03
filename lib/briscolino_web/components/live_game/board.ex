@@ -62,7 +62,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
     <div id="board" phx-hook="PlusPoints" class="bg-board w-screen h-screen">
       <div class="fixed w-64 x-0 y-0 h-full
             flex flex-col my-auto justify-center">
-        <.player_list game={@game} />
+        <.player_list game={@game} highlighted={@player_index} />
       </div>
 
       <div class="absolute w-1/2 top-0 left-1/2 -translate-x-1/2 h-2.5 bg-gray-200 rounded-full">
@@ -109,7 +109,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
           <h1 class="text-lg text-gray-200">{@status_message}</h1>
         </div>
         <div class="mt-4 w-full h-24">
-          <.player_list_mobile game={@game} />
+          <.player_list_mobile game={@game} highlighted={@player_index} />
         </div>
         <div class="flex flex-col items-center justify-center space-y-4 pt-4">
           <%= if should_show_podium(@game) do %>

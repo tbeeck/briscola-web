@@ -11,12 +11,13 @@ defmodule BriscolinoWeb.LiveGame.LobbyComponents do
   Renders players in the sidebar, either for
   a game or a lobby.
   """
-  attr :lobby, LobbyState, required: false
+  attr :lobby, LobbyState, required: true
+  attr :highlighted, :integer, default: nil
 
   def lobby_player_list(assigns) do
     ~H"""
     <ul class="pl-4 text-primary_text">
-      <%= for player <- @lobby.players do %>
+      <%= for {player, idx} <- Enum.with_index(@lobby.players) do %>
         <li class="rounded-md" ]}>
           <div class="flex flex-row items-center p-2">
             <div class="rounded-full w-12 h-12 m-2 mr-4 outline
@@ -24,7 +25,7 @@ defmodule BriscolinoWeb.LiveGame.LobbyComponents do
               Image
             </div>
             <div class="flex flex-col flex-grow">
-              <div class="text-md">{player.name}</div>
+              <.player_name name={player.name} highlighted={@highlighted == idx} />
               <div class="flex flex-row items-center">
                 <span class="pl-4 text-md flex items-center">
                   [ 0 ]
