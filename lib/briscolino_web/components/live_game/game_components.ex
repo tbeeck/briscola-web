@@ -181,7 +181,7 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
             <div class="flex flex-col flex-grow">
               <.player_name name={info.name} highlighted={@highlighted == idx} />
               <div class="flex flex-row items-center w-full">
-                <div id={"player-points-#{idx}"} class="pl-4 text-md">
+                <div id={"player-points-#{idx}"} class="text-md">
                   [ {player_score(@game, idx)} ]
                 </div>
               </div>
