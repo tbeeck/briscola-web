@@ -99,7 +99,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   def render_mobile(assigns) do
     ~H"""
-    <div id="board" phx-hook="PlusPoints" class="bg-board w-screen h-screen">
+    <div id="board" phx-hook="PlusPoints" class="bg-board w-screen">
       <div class="fixed w-full top-0 bg-gray-200 rounded-full">
         <.game_timer />
       </div>
