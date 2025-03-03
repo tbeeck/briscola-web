@@ -4,31 +4,25 @@
             "Leone",
             "Lupo",
             "Drago",
-            "Guerriero",
-            "Ombra",
             "Vento",
-            "Cavaliere",
             "Falco",
-            "Serpente",
             "Gigante",
-            "Sampo",
             "Tuono",
+            "Tonno",
             "Squalo",
             "Spada",
-            "Viandante"
+            "Sole"
         ],
         "female": [
             "Volpe",
             "Aquila",
             "Stella",
-            "Tempesta",
-            "Montagna",
             "Torre",
-            "Fenice",
             "Fiamma",
             "Neve",
             "Luna",
-            "Onda"
+            "Onda",
+            "Nuvola"
         ]
     },
     "adjectives": [
@@ -45,16 +39,8 @@
             "female": "Veloce"
         },
         {
-            "male": "Brillante",
-            "female": "Brillante"
-        },
-        {
             "male": "Oscuro",
             "female": "Oscura"
-        },
-        {
-            "male": "Luminoso",
-            "female": "Luminosa"
         },
         {
             "male": "Magico",
@@ -81,14 +67,6 @@
             "female": "Saggia"
         },
         {
-            "male": "Antico",
-            "female": "Antica"
-        },
-        {
-            "male": "Giovane",
-            "female": "Giovane"
-        },
-        {
             "male": "Ribelle",
             "female": "Ribelle"
         },
@@ -109,10 +87,6 @@
             "female": "Nobile"
         },
         {
-            "male": "Selvaggio",
-            "female": "Selvaggia"
-        },
-        {
             "male": "Furioso",
             "female": "Furiosa"
         },
@@ -123,14 +97,6 @@
         {
             "male": "Elegante",
             "female": "Elegante"
-        },
-        {
-            "male": "Spietato",
-            "female": "Spietata"
-        },
-        {
-            "male": "Coraggioso",
-            "female": "Coraggiosa"
         },
         {
             "male": "Gentile",
