@@ -102,26 +102,27 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
             <h1 class="text-2xl">{@leader.name}'s Lobby</h1>
           <% end %>
         </div>
-        <div class="flex flex-col my-auto justify-center">
+        <div class="flex flex-col mt-16 justify-center">
           <.lobby_player_list lobby={@lobby} />
         </div>
-        <div class="flex flex-col items-center mt-[10%] space-y-4">
-          <div class="flex flex-row space-x-4">
-            <.pixel_button icon="hero-plus" phx-click="add-ai">
-              Add AI
-            </.pixel_button>
-            <.pixel_button icon="hero-minus" phx-click="remove-ai">
-              Remove AI
-            </.pixel_button>
-          </div>
-          <div class="flex flex-row space-x-4">
-            <.pixel_button icon="hero-link" phx-click={JS.dispatch("phx:copy-link")}>
-              Copy Link
-            </.pixel_button>
-            <.pixel_button icon="hero-play" phx-click="start-game">
-              Start Game
-            </.pixel_button>
-          </div>
+      </div>
+      <div class="fixed bottom-0 left-1/2 -translate-x-1/2 mb-8
+                  flex flex-col items-center space-y-4">
+        <div class="flex flex-row space-x-4">
+          <.pixel_button icon="hero-plus" phx-click="add-ai">
+            Add AI
+          </.pixel_button>
+          <.pixel_button icon="hero-minus" phx-click="remove-ai">
+            Remove AI
+          </.pixel_button>
+        </div>
+        <div class="flex flex-row space-x-4">
+          <.pixel_button icon="hero-link" phx-click={JS.dispatch("phx:copy-link")}>
+            Copy Link
+          </.pixel_button>
+          <.pixel_button icon="hero-play" phx-click="start-game">
+            Start Game
+          </.pixel_button>
         </div>
       </div>
     </div>
