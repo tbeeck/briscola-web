@@ -35,10 +35,10 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
 
   def briscola_badge(assigns) do
     ~H"""
-    <div class="bg-gray-900 rounded-lg text-md">
+    <div class="bg-[#0A1117] rounded-lg text-md">
       <div class="flex flex-row items-center flex-wrap p-2">
         <span class="mx-4 flex-grow">Briscola</span>
-        <div class="flex flex-row items-center bg-gray-800 rounded-lg py-1 px-4 space-x-2">
+        <div class="flex flex-row items-center bg-[#1A2127] rounded-lg py-1 px-4 space-x-2">
           <img src={"/images/cards/fantasy/#{@card.suit}.png"} class="w-4 h-4" />
           <span>{Integer.to_string(@card.rank)}</span>
         </div>
@@ -176,7 +176,11 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
         <li class={[players_turn(@game, idx) && "bg-gray-600", "rounded-md w-full"]}>
           <div class="flex flex-row items-center p-2">
             <div class="flex flex-col flex-grow">
-              <.player_name name={info.name} highlighted={@highlighted == idx} class="font-black text-lg" />
+              <.player_name
+                name={info.name}
+                highlighted={@highlighted == idx}
+                class="font-black text-lg"
+              />
               <div class="flex flex-row items-center w-full">
                 <div id={"player-points-#{idx}"} class="text-md">
                   [ {player_score(@game, idx)} ]
@@ -289,7 +293,6 @@ defmodule BriscolinoWeb.LiveGame.GameComponents do
     </div>
     """
   end
-
 
   defp players_turn(state, player_index) do
     state.gamestate.action_on == player_index and
