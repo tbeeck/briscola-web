@@ -10,10 +10,10 @@ import Config
 # Multiplayer settings
 config :briscolino,
   game_settings: [
-    bot_think_time: 1000,
-    redeal_time: 2000,
-    score_time: 1000,
-    player_turn_time: 10_000
+    bot_think_time: 1_500,
+    redeal_time: 1_000,
+    score_time: 1_500,
+    player_turn_time: 15_000
   ]
 
 config :briscolino,

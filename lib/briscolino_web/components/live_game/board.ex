@@ -233,7 +233,7 @@ defmodule BriscolinoWeb.LiveGame.Board do
         "Game over!"
 
       Briscola.Game.needs_redeal?(game) ->
-        "Redealing..."
+        "Dealing..."
 
       game.action_on == socket.assigns.player_index ->
         "Your turn!"
