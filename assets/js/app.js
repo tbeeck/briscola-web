@@ -38,13 +38,22 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-// Copy link t o current page
+// Copy link to current page
 window.addEventListener("phx:copy-link", (_info) => {
   navigator.clipboard
     .writeText(window.location.href)
     .catch((reason) =>
       console.error("Couldn't copy share link to clipboard", reason)
     );
+});
+
+// OS share menu
+window.addEventListener("phx:share-link", (_info) => {
+  navigator.share({
+    title: document.title,
+    url: window.location.href,
+    text: "Join me on briscola.io!",
+  });
 });
 
 // connect if there are any LiveViews on the page

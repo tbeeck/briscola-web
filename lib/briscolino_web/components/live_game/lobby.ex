@@ -118,8 +118,8 @@ defmodule BriscolinoWeb.LiveGame.Lobby do
           </.pixel_button>
         </div>
         <div class="flex flex-row space-x-4">
-          <.pixel_button icon="hero-link" phx-click={JS.dispatch("phx:copy-link")}>
-            Copy Link
+          <.pixel_button icon="hero-link" phx-click={JS.dispatch("phx:share-link")}>
+            Invite
           </.pixel_button>
           <.pixel_button icon="hero-play" phx-click="start-game">
             Start Game
