@@ -248,8 +248,16 @@ defmodule BriscolinoWeb.LiveGame.Board do
 
   defp update_timer(socket, %ServerState{clock: clock}) do
     case clock.timer do
-      nil -> socket
-      timer -> push_event(socket, "timer", %{"remaining" => Process.read_timer(timer)})
+      nil ->
+        socket
+
+      timer ->
+        utc_end =
+          DateTime.utc_now()
+          |> DateTime.add(Process.read_timer(timer), :millisecond)
+          |> DateTime.to_unix()
+
+        push_event(socket, "timer", %{"end" => utc_end})
     end
   end
 

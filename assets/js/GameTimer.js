@@ -4,9 +4,9 @@ const GameTimer = {
   mounted() {
     this.start = 0;
     this.end = 0;
-    this.handleEvent("timer", ({ remaining }) => {
+    this.handleEvent("timer", ({ end }) => {
       this.start = Date.now();
-      this.end = Date.now() + remaining;
+      this.end = new Date(end * 1000);
     });
     let update = () => {
       let now = Date.now();
